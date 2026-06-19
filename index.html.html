@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MCurtain 窗簾及工程單據系統 v16 (Mobile Optimized)</title>
+    <style>
+        /* 基礎設定及 iOS 安全區域適配 */
+        body { 
+            font-family: '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', Arial, sans-serif; 
+            background-color: #faf7f2; 
+            padding: max(15px, env(safe-area-inset-top)) max(15px, env(safe-area-inset-right)) max(15px, env(safe-area-inset-bottom)) max(15px, env(safe-area-inset-left)); 
+            color: #4a3f35; margin: 0; line-height: 1.4; -webkit-text-size-adjust: 100%; 
+        }
+        .container { max-width: 1150px; background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(84, 61, 43, 0.08); margin: 0 auto; border: 1px solid #ebdcd3; }
+        
+        /* 頂部控制列 */
+        .top-ctrl { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: #f2ebe5; padding: 12px 20px; border-radius: 8px; border: 1px solid #e2d4cb; flex-wrap: wrap; gap: 10px; }
+        .lang-group { display: flex; flex-wrap: wrap; gap: 8px; }
+        .lang-btn { background: #fff; border: 1px solid #513c2f; color: #513c2f; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; font-size: 14px; }
+        .lang-btn.active { background: #513c2f; color: #fff; }
+        .mode-toggle-container { background: #fff; border: 1px solid #d1c7bd; padding: 6px; border-radius: 8px; display: inline-flex; gap: 4px; align-items: center; }
+        .mode-btn { background: transparent; border: none; padding: 10px 18px; font-size: 14px; font-weight: bold; color: #8e7f75; cursor: pointer; border-radius: 6px; transition: 0.2s; }
+        .mode-btn.active { background: #8e7f75; color: #fff; }
+        .mode-btn.active.premium { background: #664e3f; }
+        
+        /* 標題與 Logo */
+        .logo-box { text-align: center; margin-bottom: 15px; }
+        .logo-text { font-size: 32px; color: #513c2f; letter-spacing: 1px; font-weight: 500; }
+        .logo-m { font-family: 'Georgia', 'Brush Script MT', cursive; font-style: italic; font-weight: bold; color: #513c2f; font-size: 46px; margin-right: -2px; }
+        h2 { text-align: center; color: #664e3f; margin-top: 0; margin-bottom: 25px; font-weight: bold; font-size: 18px; letter-spacing: 1px; border-bottom: 1px solid #f2ebe5; padding-bottom: 15px; }
+        
+        /* 面板與彈性排版 */
+        .panel { background-color: #fcfaf7; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #ebdcd3; }
+        .panel-title { margin-top: 0; color: #513c2f; margin-bottom: 15px; font-size: 15px; border-left: 4px solid #513c2f; padding-left: 10px; font-weight: bold; text-transform: uppercase; }
+        .row { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 15px; }
+        .col { flex: 1; min-width: 200px; } /* 加大 min-width 令手機自動單行顯示 */
+        
+        /* 互動元素適配 (字體強制 16px 防 iOS 縮放，加厚 padding 適配手指) */
+        label { display: block; font-weight: bold; margin-bottom: 6px; font-size: 13px; color: #8e7f75; }
+        input, select, textarea { width: 100%; padding: 14px; border: 1px solid #d1c7bd; border-radius: 8px; box-sizing: border-box; font-size: 16px !important; background-color: #fff; color: #4a3f35; font-family: inherit; transition: border 0.3s; }
+        select { background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23513c2f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 12px center; background-size: 1em; padding-right: 40px; appearance: none; -webkit-appearance: none; }
+        input:focus, select:focus, textarea:focus { border-color: #513c2f; outline: none; box-shadow: 0 0 0 2px rgba(81, 60, 47, 0.2); }
+        .check-container { display: flex; align-items: center; gap: 8px; padding-top: 15px; cursor: pointer; font-size: 15px; font-weight: bold; color: #b5651d; }
+        .check-container input { width: 24px; height: 24px; accent-color: #b5651d; cursor: pointer; }
+        
+        .toggle-section-btn { background-color: #8e7f75; color: #fff; border: none; font-size: 14px; padding: 14px 15px; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 15px; text-align: left; display: flex; justify-content: space-between; align-items: center; }
+        
+        /* 窗戶項目彈性排版 (取代舊有 Grid) */
+        .window-item { background: #fff; border: 1px solid #ebdcd3; border-radius: 10px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .win-flex-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; align-items: flex-end; }
+        .win-sub-box { background: #faf7f2; padding: 15px; border-radius: 8px; border: 1px dashed #d1c7bd; display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+        
+        .remove-btn { background-color: #d9a094; color: white; border: none; padding: 14px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold; width: 100%; }
+        .add-btn { background-color: #fff; color: #664e3f; padding: 18px; border: 2px dashed #a89485; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 25px; touch-action: manipulation; }
+        
+        /* 行動按鈕 */
+        .action-btns { display: flex; gap: 12px; margin-top: 10px; margin-bottom: 40px; flex-wrap: wrap; }
+        .btn-action { flex: 1; min-width: 180px; padding: 16px 10px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; color: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); touch-action: manipulation; }
+        
+        /* 設定區域 */
+        .receipt-config-box { display: flex; flex-wrap: wrap; gap: 15px; background: #fdfbf7; border: 1px solid #ebdcd3; padding: 18px; border-radius: 8px; margin-bottom: 20px; align-items: end; }
+        .receipt-config-box > div { flex: 1; min-width: 200px; }
+        .pdf-type-selector { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 25px; background: #fdfaf7; padding: 15px; border-radius: 8px; border: 1px solid #ebdcd3; align-items: center; }
+        .pdf-type-btn { flex: 1; min-width: 140px; background: #fff; border: 1px solid #a89485; color: #664e3f; padding: 12px; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: bold; text-align: center; }
+        .pdf-type-btn.active { background: #664e3f; color: #fff; border-color: #664e3f; }
+        
+        /* 單據預覽與表格 */
+        .result-box { margin-top: 30px; padding: 25px; background-color: #fff; border: 2px solid #513c2f; border-radius: 12px; display: none; }
+        .invoice-header { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; border-bottom: 1px solid #ebdcd3; padding-bottom: 20px; position: relative; }
+        .invoice-company-info { font-size: 13px; line-height: 1.6; color: #6e5d53; }
+        .invoice-client-info { font-size: 15px; line-height: 1.6; margin-bottom: 25px; background: #fcfaf7; padding: 18px; border-radius: 8px; border: 1px solid #ebdcd3; }
+        .inv-number-badge { font-size: 18px; font-weight: bold; color: #513c2f; background: #f2ebe5; padding: 6px 12px; border-radius: 6px; border: 1px solid #e2d4cb; display: inline-block; margin-top: 5px; }
+        
+        .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-bottom: 25px; border-radius: 6px; border: 1px solid #ebdcd3; }
+        table { width: 100%; border-collapse: collapse; min-width: 850px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ebdcd3; font-size: 14px; }
+        th { background-color: #fbf9f6; color: #664e3f; font-weight: bold; white-space: nowrap; }
+        
+        /* 總結區域彈性設計 */
+        .summary-wrapper { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; font-size: 15px; border-top: 1px solid #ebdcd3; padding-top: 20px; margin-bottom: 25px; }
+        .summary-item { display: flex; justify-content: space-between; width: 350px; align-items: center; }
+        .grand-total { font-size: 22px; font-weight: bold; color: #513c2f; border-top: 2px solid #513c2f; padding-top: 12px; margin-top: 5px; width: 100%; max-width: 350px; }
+        .receipt-highlight { color: #b5651d; font-weight: bold; font-size: 16px; }
+        .balance-highlight { color: #d45d43; font-weight: bold; font-size: 18px; border-top: 1px dashed #d1c7bd; padding-top: 8px; margin-top: 4px; }
+        
+        .signature-section { display: grid; grid-template-columns: 1fr; gap: 40px; margin-top: 20px; padding-top: 20px; border-top: 1px solid #ebdcd3; }
+        .sig-box { text-align: center; }
+        .sig-line { border-bottom: 1px dashed #664e3f; margin-top: 50px; width: 80%; margin-left: auto; margin-right: auto; }
+        .invoice-footer { margin-top: 35px; text-align: center; font-size: 13px; color: #9c8f84; border-top: 1px dashed #ebdcd3; padding-top: 20px; line-height: 1.6; }
+        
+        #measureReceiptOnlyItem { display:none; padding: 30px 20px; border: 2px dashed #ebdcd3; background: #fdfbf7; border-radius: 8px; margin-bottom: 25px; font-weight: bold; font-size: 18px; color: #513c2f; text-align: center; letter-spacing: 1px; }
+
+        body.mode-simple .simple-hide { display: none !important; }
+        body.mode-customer .company-only-field { display: none !important; }
+
+        /* =========================================
+           為 iPad & 平板裝置優化 (Tablet Optimization)
+           ========================================= */
+        @media (min-width: 768px) {
+            body { padding: 25px; }
+            .col { min-width: calc(50% - 15px); } /* 表單兩列並排 */
+            .invoice-header { flex-direction: row; justify-content: space-between; align-items: flex-end; }
+            .invoice-company-info { text-align: right; }
+            .signature-section { grid-template-columns: 1fr 1fr; gap: 50px; }
+        }
+
+        /* =========================================
+           為 iPhone & 手機極致優化 (Mobile Optimization)
+           ========================================= */
+        @media (max-width: 767px) {
+            .container { padding: 15px; border-radius: 8px; border: none; }
+            .panel { padding: 15px; border-radius: 8px; }
+            .window-item { padding: 15px; border-radius: 8px; }
+            .top-ctrl { flex-direction: column; padding: 15px; text-align: center; gap: 15px; }
+            .mode-toggle-container, .lang-group { width: 100%; justify-content: center; }
+            .lang-btn { flex: 1; text-align: center; }
+            .logo-text { font-size: 26px; }
+            .logo-m { font-size: 38px; }
+            
+            /* 手機單行表單顯示更舒適 */
+            .col { min-width: 100%; } 
+            
+            /* 手機版按鈕全闊堆疊 */
+            .action-btns { flex-direction: column; gap: 10px; margin-bottom: 25px; }
+            .btn-action { width: 100%; padding: 18px 10px; }
+            .pdf-type-selector { flex-direction: column; gap: 10px; }
+            .pdf-type-btn { width: 100%; }
+
+            /* 手機版收據總結區域滿版 */
+            .summary-wrapper { align-items: stretch; background: #fdfbf7; padding: 15px; border-radius: 8px; margin-top: 15px; }
+            .summary-item { width: 100%; font-size: 15px; }
+            .grand-total { max-width: 100%; font-size: 20px; }
+            
+            /* Checkbox 對齊修正 */
+            .check-container { padding-top: 5px; }
+            
+            /* 調整客戶及公司資料顯示 */
+            .invoice-client-info .row { flex-direction: column; gap: 10px; }
+            .invoice-header { text-align: center; }
+        }
+
+        /* =========================================
+           列印模式優化 (A4)
+           ========================================= */
+        @media print {
+            body { background-color: #fff; color: #000; padding: 0; margin: 0; font-size: 12px; }
+            .container { box-shadow: none; border: none; padding: 0; max-width: 100%; margin: 0; }
+            .top-ctrl, .panel, .add-btn, .action-btns, .remove-btn, .toggle-section-btn, .window-item, .pdf-type-selector, .receipt-config-box, .logo-box, h2 { display: none !important; }
+            .result-box { display: block !important; border: none; padding: 0; margin: 0; }
+            .invoice-header { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 2px solid #513c2f; flex-direction: row; justify-content: space-between; align-items: flex-end; }
+            .invoice-company-info { text-align: right; }
+            .invoice-client-info { margin-bottom: 10px; padding: 10px; }
+            .invoice-client-info .row { flex-direction: row; }
+            .table-responsive { overflow: visible; border: none; margin-bottom: 10px; }
+            table { min-width: 100%; page-break-inside: auto; }
+            tr { page-break-inside: avoid; page-break-after: auto; }
+            th, td { padding: 6px 4px; font-size: 12px; }
+            .summary-wrapper { padding-top: 10px; margin-bottom: 10px; font-size: 14px; background: transparent; align-items: flex-end; }
+            .summary-item { width: 300px; }
+            .invoice-footer { margin-top: 10px; padding-top: 10px; font-size: 11px; }
+            .signature-section { margin-top: 10px; padding-top: 10px; grid-template-columns: 1fr 1fr; gap: 30px; }
+            .sig-line { margin-top: 30px; width: 90%; }
+            #discountSelect, #depositSelect { display: none !important; }
+            #lblDiscountText, #lblDepositPrintText { display: inline !important; }
+            #measureReceiptOnlyItem { border: 2px solid #513c2f; background: #fff; margin-bottom: 15px; padding: 15px; }
+        }
+    </style>
+</head>
+<body onload="loadConfig()">
+
+<div class="top-ctrl">
+    <div class="mode-toggle-container">
+        <span id="ui-mode-label" style="font-size:14px; font-weight:bold; color:#513c2f; margin-right:5px;">工作模式:</span>
+        <button class="mode-btn premium active" id="btn-mode-full" onclick="setUiMode('full')">完整模式</button>
+        <button class="mode-btn" id="btn-mode-simple" onclick="setUiMode('simple')">精簡模式</button>
+    </div>
+    <div class="lang-group">
+        <button class="lang-btn active" onclick="changeLang('zh_tw', this)">繁體</button>
+        <button class="lang-btn" onclick="changeLang('zh_cn', this)">简体</button>
+        <button class="lang-btn" onclick="changeLang('en', this)">EN</button>
+    </div>
+</div>
+
+<div class="container">
+    <div class="logo-box">
+        <div class="logo-text"><span class="logo-m">M</span>Curtain</div>
+    </div>
+    <h2 id="ui-main-title">窗簾及工程報價系統</h2>
+    
+    <button class="toggle-section-btn simple-hide" onclick="toggleSection('panelSystemSettings', 'btnToggleSys')">
+        <span id="btnToggleSys">⚙️ 打開：系統底價配置 (平時不需理會)</span><span>▼</span>
+    </button>
+    <div id="panelSystemSettings" class="panel" style="display: none;">
+        <div class="panel-title" id="ui-panel-sys">核心底價設定 (自動儲存)</div>
+        <div class="row">
+            <div class="col">
+                <label id="ui-lbl-staff">負責員工:</label>
+                <select id="staffName" onchange="saveConfig()"><option value="Henry">Henry</option><option value="Emily">Emily</option><option value="Helen">Helen</option><option value="Anson">Anson</option><option value="Edison">Edison</option></select>
+            </div>
+            <div class="col"><label>布簾-固定價 ($/橫呎):</label><input type="number" id="rateCurtainFixed" value="50" oninput="saveConfig()"></div>
+            <div class="col"><label>窗紗-固定價 ($/橫呎):</label><input type="number" id="rateSheerFixed" value="30" oninput="saveConfig()"></div>
+            <div class="col"><label>額外遮光布 ($/橫呎):</label><input type="number" id="rateBlackout" value="40" oninput="saveConfig()"></div>
+        </div>
+        <div class="row" style="margin-top:10px;">
+            <div class="col"><label>全局安裝費 ($):</label><input type="number" id="installBase" value="0" oninput="saveConfig()"></div>
+            <div class="col"><label>S級布料每呎($):</label><input type="number" id="rateS" value="120" oninput="saveConfig()"></div>
+            <div class="col"><label>A級布料每呎($):</label><input type="number" id="rateA" value="95" oninput="saveConfig()"></div>
+            <div class="col"><label>B級布料每呎($):</label><input type="number" id="rateB" value="75" oninput="saveConfig()"></div>
+            <div class="col"><label>C級布料每呎($):</label><input type="number" id="rateC" value="60" oninput="saveConfig()"></div>
+            <div class="col"><label>D級布料每呎($):</label><input type="number" id="rateD" value="45" oninput="saveConfig()"></div>
+            <div class="col"><label>蚊網基礎價 ($/平方呎):</label><input type="number" id="rateMosq" value="40" oninput="saveConfig()"></div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-title" id="ui-panel-cust">客戶及施工資料</div>
+        <div class="row">
+            <div class="col"><label id="ui-lbl-cname">客戶貴姓:</label><input type="text" id="custName" placeholder="陳 / Wong" oninput="updateDocumentTitle()"></div>
+            <div class="col"><label id="ui-lbl-ctitle">稱謂:</label><select id="custTitle"><option value="mr">先生 / Mr.</option><option value="ms">小姐 / Ms.</option><option value="mrs">太太 / Mrs.</option><option value="dr">博士 / Dr.</option></select></div>
+            <div class="col"><label id="ui-lbl-cphone">聯絡電話:</label><input type="number" id="custPhone" placeholder="例: 61234567" oninput="updateDocumentTitle()"></div>
+            <div class="col">
+                <label id="ui-lbl-qnum">單號 (5位數字):</label>
+                <div style="display: flex; align-items: center;">
+                    <span style="font-weight: bold; margin-right: 5px; font-size: 16px; color: #513c2f;">#M</span>
+                    <input type="number" id="quoteNo" placeholder="00001" oninput="if(this.value.length>5) this.value=this.value.slice(0,5); updateDocumentTitle();">
+                </div>
+            </div>
+        </div>
+        <div class="row simple-hide">
+            <div class="col" style="flex: 2; min-width: 100%;"><label id="ui-lbl-caddr">屋苑/大廈名稱:</label><input type="text" id="addrEstate" placeholder="例: 沙田第一城"></div>
+            <div class="col"><label id="ui-lbl-addr-b">座數 (Block):</label><input type="text" id="addrBlock" placeholder="例: 3"></div>
+            <div class="col"><label id="ui-lbl-addr-f">樓層 (Floor):</label><input type="text" id="addrFloor" placeholder="例: 28"></div>
+            <div class="col"><label id="ui-lbl-addr-u">單位 (Unit):</label><input type="text" id="addrUnit" placeholder="例: D"></div>
+        </div>
+        <div class="row simple-hide" style="margin-top: 15px; border-top: 1px dashed #d1c7bd; padding-top: 15px;">
+            <div class="col"><label id="ui-lbl-date-m">度尺日期 (選填):</label><input type="date" id="measureDate" onchange="autoSetInstallDate(); if(document.getElementById('resultBox').style.display==='block') calculateAll();"></div>
+            <div class="col"><label id="ui-lbl-date-i">預計安裝時間 (選填):</label><input type="date" id="installDate" onchange="if(document.getElementById('resultBox').style.display==='block') calculateAll();"></div>
+        </div>
+    </div>
+
+    <div id="windowList">
+        </div>
+
+    <button class="add-btn" id="ui-btn-addwin" onclick="addWindow()">+ 新增窗戶位置</button>
+    
+    <div class="panel">
+        <div class="panel-title" id="ui-panel-finance">單據及訂金付款管理</div>
+        <div class="receipt-config-box">
+            <div>
+                <label class="check-container" style="color: #513c2f;">
+                    <input type="checkbox" id="chkDeductMeasure" onchange="if(document.getElementById('resultBox').style.display==='block') calculateAll()">
+                    <span id="ui-lbl-chkmeasure">已收取 $500 度尺費 (自動扣減)</span>
+                </label>
+            </div>
+            <div>
+                <label id="ui-lbl-depselect">訂金支付配置 (首期):</label>
+                <select id="depositSelect" onchange="handleDepositChange()">
+                    <option value="0">未付訂金</option><option value="measure_only">淨收 $500 度尺訂金</option><option value="0.5">支付 50% 訂金</option><option value="0.3">支付 30% 訂金</option><option value="custom">自訂訂金金額 ($)</option>
+                </select>
+            </div>
+            <div id="customDepositWrapper" style="display: none;">
+                <label id="ui-lbl-custdep">請輸入已收訂金金額 ($):</label>
+                <input type="number" id="customDepositVal" value="0" oninput="if(document.getElementById('resultBox').style.display==='block') calculateAll()">
+            </div>
+            <div class="simple-hide">
+                <label id="ui-lbl-urgent" style="color: #d45d43;">加急/特殊附加費 ($):</label>
+                <input type="number" id="urgentCharge" value="0" oninput="if(document.getElementById('resultBox').style.display==='block') calculateAll()" placeholder="如無請留空">
+            </div>
+        </div>
+    </div>
+
+    <button class="toggle-section-btn simple-hide" style="background-color: #a89485;" onclick="toggleSection('panelRemarks', 'btnToggleRem')">
+        <span id="btnToggleRem">➕ 填寫全單特別備註 / 異常情況紀錄</span><span>▼</span>
+    </button>
+    <div id="panelRemarks" class="panel" style="display: none; background-color: #fff3cd; border-color: #ffeeba;">
+        <label style="color: #856404;">此備註將印於單據底部 (例如：特定高空作業風險、不包清拆等)</label>
+        <textarea id="specialRemarks" rows="3" placeholder="請在此輸入特別條款或備註..." oninput="if(document.getElementById('resultBox').style.display==='block') calculateAll()"></textarea>
+    </div>
+
+    <div class="action-btns">
+        <button class="btn-action" id="ui-btn-reset" style="background-color: #d9827c;" onclick="resetForm()">🔄 一鍵清零</button>
+        <button class="btn-action" id="ui-btn-quote" style="background-color: #8e7f75;" onclick="generateDoc('quote')">📝 生成報價單</button>
+        <button class="btn-action" id="ui-btn-measure-receipt" style="background-color: #b5651d;" onclick="generateDoc('measure_receipt')">📏 生成度尺訂金單</button>
+        <button class="btn-action" id="ui-btn-invoice" style="background-color: #664e3f;" onclick="generateDoc('invoice')">🧾 生成正式單據</button>
+        <button class="btn-action" id="ui-btn-print" style="background-color: #4a3f35; display: none;" onclick="window.print()">🖨️ 列印 / 匯出 PDF</button>
+    </div>
+
+    <div class="result-box" id="resultBox">
+        <div class="pdf-type-selector">
+            <span style="font-size:14px; color:#513c2f; font-weight:bold; width:100%;" id="ui-pdf-sel-lbl">單據顯示模式切換：</span>
+            <button class="pdf-type-btn active" id="btn-pdf-cust" onclick="setPdfMode('customer')">客戶版 (隱藏詳細地址)</button>
+            <button class="pdf-type-btn" id="btn-pdf-comp" onclick="setPdfMode('company')">公司版 (顯示完整地址)</button>
+        </div>
+
+        <div class="invoice-header">
+            <div>
+                <h1 style="margin:0; font-size:28px; color:#513c2f;"><span class="logo-m">M</span>Curtain</h1>
+                <div style="font-size:14px; margin-top:5px; color:#7f4f24; font-weight: bold;" id="ui-inv-type">工程報價單</div>
+                <div id="invoiceNoWrapper" class="inv-number-badge">---</div>
+            </div>
+            <div class="invoice-company-info">
+                <strong>MCurtain Ltd.</strong><br>新城市中央廣場 Home Circle 811<br>Tel: (852) 2634 0689<br><span id="ui-inv-date">印單日期:</span> <span id="invDate"></span>
+            </div>
+        </div>
+
+        <div class="invoice-client-info">
+            <div class="row" style="margin-bottom: 0;">
+                <div class="col" style="flex:2;">
+                    <strong>Customer:</strong> <span id="lblClientName"></span> &nbsp;&nbsp; <strong>Tel:</strong> <span id="lblClientPhone"></span>
+                    <div class="company-only-field" style="margin-top: 10px; color: #7f4f24; font-weight: bold; font-size:14px;">
+                        <span id="ui-lbl-inv-addr">安裝地址:</span> <span id="lblInvoiceAddress"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <strong>Sales:</strong> <span id="lblStaffName"></span>
+                    <div id="printDateBox" style="margin-top:10px; font-size:13px; color:#6e5d53; display:none;">
+                        <div id="printMeasureDateRow"><span id="lbl_print_mdate">度尺日期:</span> <span id="printMeasureDate"></span></div>
+                        <div id="printInstallDateRow"><span id="lbl_print_idate">預計安裝:</span> <span id="printInstallDate"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="measureReceiptOnlyItem"></div>
+
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th id="th-item">位置</th><th id="th-size">尺寸</th><th id="th-ft">呎數</th><th id="th-type">款式物料</th><th id="th-open" class="simple-hide">開關</th><th id="th-motor" class="simple-hide">路軌配置</th><th id="th-rem" class="simple-hide">備註</th><th id="th-sub">小計</th>
+                    </tr>
+                </thead>
+                <tbody id="reportTableBody"></tbody>
+            </table>
+        </div>
+
+        <div class="summary-wrapper" id="mainSummaryWrapper">
+            <div class="summary-item"><span id="ui-sum-sub">小計:</span><span id="subTotalText">HK$0</span></div>
+            <div class="summary-item simple-hide" id="summaryInstRow"><span id="ui-sum-inst">安裝費:</span><span id="installTotalText">HK$0</span></div>
+            <div class="summary-item simple-hide" id="summaryUrgentRow" style="display:none; color:#d45d43;"><span id="ui-sum-urgent">附加費:</span><span id="urgentTotalText">HK$0</span></div>
+            <div class="summary-item" id="summaryDiscRow">
+                <span id="ui-sum-disc">折扣:</span>
+                <select id="discountSelect" onchange="applyDiscount()" style="width: auto; padding: 6px 30px 6px 10px; font-size: 16px !important;">
+                    <option value="1.0">原價</option>
+                    <script>for(let i=95; i>=50; i-=5) document.write(`<option value="${i/100}">${i}% (${i/10}折)</option>`);</script>
+                </select>
+                <span id="lblDiscountText">-</span>
+            </div>
+            <div class="summary-item" id="summaryMeasureDeductRow" style="display:none; color:#b5651d; font-weight:bold;">
+                <span id="ui-sum-measure-deduct">扣除預收度尺費:</span><span>-HK$500</span>
+            </div>
+            <div class="summary-item grand-total"><span id="ui-sum-grand">最終總價:</span><span id="grandTotalText">HK$0</span></div>
+            <div class="summary-item receipt-highlight" style="margin-top:5px;" id="summaryDepRow">
+                <span id="ui-sum-dep-paid">已付訂金 (首期):</span><span id="depositPaidText">HK$0</span><span id="lblDepositPrintText" style="display:none; font-weight:bold;">HK$0</span>
+            </div>
+            <div class="summary-item balance-highlight" id="summaryBalRow"><span id="ui-sum-balance">尚欠尾款:</span><span id="balanceDueText">HK$0</span></div>
+        </div>
+
+        <div id="quoteDisclaimer" style="margin-top: 25px; padding: 15px; background: #fff3cd; color: #856404; border: 1px solid #ffeeba; border-radius: 8px; font-weight: bold; text-align: center; font-size: 14px; display: none;"></div>
+        
+        <div id="printSpecialRemarksBox" style="display:none; margin-top:20px; padding:15px; border:1px solid #513c2f; border-radius:8px; background:#faf7f2;">
+            <strong style="color:#513c2f; font-size:14px;" id="ui-print-rem-title">⚠️ 特別備註 / Special Remarks:</strong>
+            <div id="printSpecialRemarksText" style="margin-top:8px; font-size:14px; color:#4a3f35; white-space: pre-wrap;"></div>
+        </div>
+
+        <div class="signature-section" style="display: none;">
+            <div class="sig-box"><div class="sig-line"></div><p style="font-size:13px; color:#513c2f; font-weight:bold; margin-top:10px;" id="ui-sig-client">客戶簽名確認 (Client Signature)</p></div>
+            <div class="sig-box"><div class="sig-line"></div><p style="font-size:13px; color:#513c2f; font-weight:bold; margin-top:10px;" id="ui-sig-comp">公司蓋印及經手人 (Company Chop & Sales)</p></div>
+        </div>
+
+        <div class="invoice-footer">
+            <span id="ui-ft-1">報價包含度尺及安裝。</span><br><span id="ui-ft-val">報價有效期為 30 天。</span><br><span id="ui-ft-dep">確認訂單需付 50% 訂金。</span><br><br>
+            <div id="ig-promo" style="display: block;">
+                <strong id="ui-ft-ig" style="color:#b5651d; font-size: 14px;">📸 Instagram: @m.curtain.hk</strong><br>
+            </div>
+            <strong id="ui-ft-tech" style="margin-top: 5px; display: inline-block;">技術查詢及售後支援</strong><br><strong id="ui-ft-2">Tel/WhatsApp: (852) 61206498</strong>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentLang = 'zh_tw'; let uiMode = 'full'; let currentDocType = 'quote';
+    const configKeys = ['staffName', 'rateCurtainFixed', 'rateSheerFixed', 'rateBlackout', 'installBase', 'rateS', 'rateA', 'rateB', 'rateC', 'rateD', 'rateMosq'];
+    
+    function saveConfig() { configKeys.forEach(k => { localStorage.setItem('mcurtain_' + k, document.getElementById(k).value); }); }
+    function loadConfig() {
+        configKeys.forEach(k => { if(localStorage.getItem('mcurtain_' + k) !== null) document.getElementById(k).value = localStorage.getItem('mcurtain_' + k); });
+        addWindow(); 
+    }
+
+    const dict = {
+        zh_tw: { title: "窗簾及工程單據系統", pos: "位置", num: "編號", width: "闊度", height: "高度", layer: "款式物料", rem: "布版及顏色備註", both: "布+紗 (雙層)", double_blackout: "雙層遮光布 (無窗紗)", triple: "布+紗+額外遮光布 (三層)", curtain: "淨布簾 (單層)", sheer: "淨窗紗 (單層)", track_only: "淨路軌 (不連布料)", rateS:"S 級布料系列", rateA:"A 級布料系列", rateB:"B 級布料系列", rateC:"C 級布料系列", rateD:"D 級布料系列", sq_blinds:"百葉簾", sq_honey:"風琴簾", sq_zebra:"斑馬簾/柔紗簾", sq_roman:"羅馬簾", sq_roller:"捲簾", sq_mosquito:"防蚊網", sq_other:"其他平方呎款式", no: "不需要", rails: "支", delete: "❌ 刪除此窗", btn_quote: "📝 生成報價單", btn_invoice: "🧾 生成正式單據", btn_measure_receipt: "📏 生成度尺訂金單", btn_print: "🖨️ 列印 / 匯出 PDF", btn_reset: "🔄 一鍵清零", confirm_reset: "確定要清除所有客戶資料及窗戶設定？\n(底價設定將會保留)", sum_sub: "小計", sum_inst: "安裝費", sum_urgent: "附加費", sum_disc: "折扣", sum_grand: "最終總價", sum_meas_deduct: "扣除預收度尺費", sum_dep_paid: "已付訂金 (首期)", sum_balance: "尚欠尾款", ft1: "報價包含度尺及安裝。", ft2: "Tel/WhatsApp: (852) 61206498", inv_type_quote: "工程報價單", inv_type_bill: "工程收據暨正式單據", inv_type_measure: "度尺訂金單", measure_item_desc: "上門度尺費 (On-site Measurement Fee)", th_size: "尺寸", th_ft: "呎數", th_type: "款式物料", th_mode: "計價模式", th_open: "開關", th_motor: "路軌配置", th_rem: "備註", th_sub: "小計", ft_val: "報價有效期為 30 天。", ft_dep: "確認訂單需付 50% 訂金。", pdf_sel: "單據顯示模式切換：", pdf_cust: "客戶版 (隱藏地址)", pdf_comp: "公司版 (顯示地址)", inv_date: "印單日期:", lbl_m_date: "度尺日期:", lbl_i_date: "預計安裝:", inv_addr: "安裝地址:", sig_client: "客戶簽名確認 (Client Signature)", sig_comp: "公司蓋印及經手人 (Company Chop & Sales)", mode_w: "橫呎", mode_a: "平方呎", living: "客廳", dining: "飯廳", master: "主人房", bed: "睡房", study: "書房", maid: "工人房", toilet: "廁所", kitchen: "廚房", other: "其他", none: "無", mr: "先生", ms: "小姐", mrs: "太太", dr: "博士", open: "開關", opening:"開關方式", double:"雙開", single:"單開", m_track:"手動路軌", e_track:"電動路軌", lbl_sq_price: "平方呎單價($)", tech:"技術查詢及售後支援", quote_warn: "⚠️ 此為初步問價參考，最終款式可行性及造價需以上門實際度尺為準。", wired: "濕電", battery: "乾電", unit_ft: "呎", unit_sqft: "平方呎", width_label: "闊", lbl_manual: "手動", lbl_motor: "電動", double_charge: "雙倍計" },
+        zh_cn: { title: "窗帘及工程单据系统", pos: "位置", num: "编号", width: "宽度", height: "高度", layer: "款式物料", rem: "布版及颜色备注", both: "布+纱 (双层)", double_blackout: "双层遮光布 (无窗纱)", triple: "布+纱+额外遮光布", curtain: "净布帘 (单层)", sheer: "净窗纱 (单层)", track_only: "净路轨 (不连布料)", rateS:"S 级布料系列", rateA:"A 级布料系列", rateB:"B 级布料系列", rateC:"C 级布料系列", rateD:"D 级布料系列", sq_blinds:"百叶帘", sq_honey:"风琴帘", sq_zebra:"斑马帘/柔纱帘", sq_roman:"罗马帘", sq_roller:"卷帘", sq_mosquito:"防蚊网", sq_other:"其他平方呎款式", no: "不需要", rails: "支", delete: "❌ 删除此窗", btn_quote: "📝 生成报价单", btn_invoice: "🧾 生成正式单据", btn_measure_receipt: "📏 生成度尺订金单", btn_print: "🖨️ 打印 / 导出 PDF", btn_reset: "🔄 一键清零", confirm_reset: "确定要清除所有客户资料及窗户设定？", sum_sub: "小计", sum_inst: "安装费", sum_urgent: "附加费", sum_disc: "折扣", sum_grand: "最终总价", sum_meas_deduct: "扣除预收度尺费", sum_dep_paid: "已付订金 (首期)", sum_balance: "尚欠尾款", ft1: "报价包含度尺及安装。", ft2: "Tel/WhatsApp: (852) 61206498", inv_type_quote: "工程报价单", inv_type_bill: "工程收据暨正式单据", inv_type_measure: "度尺订金单", measure_item_desc: "上门度尺费 (On-site Measurement Fee)", th_size: "尺寸", th_ft: "呎数", th_type: "款式物料", th_mode: "计价模式", th_open: "开关", th_motor: "路轨配置", th_rem: "备注", th_sub: "小计", ft_val: "报价有效期为 30 天。", ft_dep: "确认订单需付 50% 订金。", pdf_sel: "单据显示模式切换：", pdf_cust: "客户版 (隐藏地址)", pdf_comp: "公司版 (显示地址)", inv_date: "印单日期:", lbl_m_date: "度尺日期:", lbl_i_date: "预计安装:", inv_addr: "安装地址:", sig_client: "客户签名确认 (Client Signature)", sig_comp: "公司盖印及经手人 (Company Chop & Sales)", mode_w: "横呎", mode_a: "平方呎", living: "客厅", dining: "饭厅", master: "主人房", bed: "睡房", study: "书房", maid: "工人房", toilet: "厕所", kitchen: "厨房", other: "其他", none: "无", mr: "先生", ms: "小姐", mrs: "太太", dr: "博士", open: "开关", opening:"开关方式", double:"双开", single:"单开", m_track:"手动路轨", e_track:"电动路轨", lbl_sq_price: "平方呎单价($)", tech:"技术查询及售后支援", quote_warn: "⚠️ 此为初步问价参考，最终款式可行性及造价需以上门实际度尺为准。", wired: "湿电", battery: "干电", unit_ft: "呎", unit_sqft: "平方呎", width_label: "宽", lbl_manual: "手动", lbl_motor: "电动", double_charge: "双倍计" },
+        en: { title: "Curtain & Invoice System", pos: "Location", num: "No.", width: "Width", height: "Height", layer: "Style & Material", rem: "Remarks", both: "Fabric+Sheer", double_blackout: "Double Blackout", triple: "Fab+Sheer+Blackout", curtain: "Fabric Only", sheer: "Sheer Only", track_only: "Track Only", rateS:"S-Grade", rateA:"A-Grade", rateB:"B-Grade", rateC:"C-Grade", rateD:"D-Grade", sq_blinds:"Blinds", sq_honey:"Honeycomb", sq_zebra:"Zebra", sq_roman:"Roman", sq_roller:"Roller", sq_mosquito:"Mosq. Net", sq_other:"Other SqFt", no: "None", rails: "pcs", delete: "❌ Delete", btn_quote: "📝 Quotation", btn_invoice: "🧾 Invoice", btn_measure_receipt: "📏 Measurement Receipt", btn_print: "🖨️ PDF", btn_reset: "🔄 Clear", confirm_reset: "Clear all data?", sum_sub: "Subtotal", sum_inst: "Install Fee", sum_urgent: "Surcharge", sum_disc: "Discount", sum_grand: "Grand Total", sum_meas_deduct: "Deduct Pre-paid Meas", sum_dep_paid: "Deposit Paid", sum_balance: "Balance Due", ft1: "Quote includes measurement and install.", ft2: "Tel/WhatsApp: (852) 61206498", inv_type_quote: "Quotation", inv_type_bill: "Official Receipt & Invoice", inv_type_measure: "Measurement Deposit Receipt", measure_item_desc: "On-site Measurement Fee", th_size: "Size", th_ft: "Area/Len", th_type: "Style", th_mode: "Pricing", th_open: "Open", th_motor: "Track Config", th_rem: "Remarks", th_sub: "Subtotal", ft_val: "Valid for 30 days.", ft_dep: "50% deposit required.", pdf_sel: "Display Mode:", pdf_cust: "Customer (Hide Addr)", pdf_comp: "Company (Show Addr)", inv_date: "Date:", lbl_m_date: "Measure Date:", lbl_i_date: "Est. Install:", inv_addr: "Address:", sig_client: "Client Signature", sig_comp: "Company Chop & Sales", mode_w: "Linear Ft", mode_a: "Sq.Ft", living: "Living Rm", dining: "Dining Rm", master: "Master Rm", bed: "Bedroom", study: "Study Rm", maid: "Maid Rm", toilet: "Toilet", kitchen: "Kitchen", other: "Other", none: "N/A", mr: "Mr.", ms: "Ms.", mrs: "Mrs.", dr: "Dr.", open: "Open", opening:"Opening", double:"Center Split", single:"One-Way", m_track:"Manual Track", e_track:"Motor Track", lbl_sq_price: "Unit Price($)", tech:"Technical Support", quote_warn: "⚠️ Preliminary quote. Subject to on-site measurement.", wired: "Wired", battery: "Battery", unit_ft: "ft", unit_sqft: "sq.ft", width_label: "W", lbl_manual: "Manual", lbl_motor: "Motor", double_charge: "Double" }
+    };
+
+    function autoSetInstallDate() {
+        const m = document.getElementById('measureDate').value;
+        if(m) {
+            const md = new Date(m);
+            md.setDate(md.getDate() + 14);
+            document.getElementById('installDate').value = md.toISOString().split('T')[0];
+        }
+    }
+
+    function handleLayerChange(sel) {
+        const val = sel.value;
+        const winItem = sel.closest('.window-item');
+        const manualQty = winItem.querySelector('.manual-qty');
+        const motorQty = winItem.querySelector('.motor-qty');
+        const trackItems = winItem.querySelectorAll('.track-item');
+        const openTypeWrapper = winItem.querySelector('.open-type-wrapper');
+        const customPriceField = winItem.querySelector('.custom-price-field');
+
+        if (val.startsWith('sq_') || val === 'track_only') {
+            customPriceField.style.display = 'block';
+            if(val === 'sq_mosquito') winItem.querySelector('.custom-rate').value = document.getElementById('rateMosq').value;
+            else winItem.querySelector('.custom-rate').value = '';
+            
+            openTypeWrapper.style.display = 'none';
+            trackItems.forEach(el => el.style.display = 'none');
+            manualQty.value = "0";
+            motorQty.value = "0";
+        } else if (val === 'track_only') {
+            customPriceField.style.display = 'none';
+            winItem.querySelector('.custom-rate').value = '';
+            openTypeWrapper.style.display = 'none';
+            trackItems.forEach(el => el.style.display = 'block');
+            manualQty.value = "1";
+        } else {
+            customPriceField.style.display = 'none';
+            winItem.querySelector('.custom-rate').value = '';
+            openTypeWrapper.style.display = 'block';
+            trackItems.forEach(el => el.style.display = 'block');
+
+            if (val === 'both' || val === 'double_blackout') {
+                manualQty.value = "2"; motorQty.value = "0";
+            } else if (val === 'triple') {
+                manualQty.value = "3"; motorQty.value = "0";
+            } else {
+                manualQty.value = "1"; motorQty.value = "0";
+            }
+        }
+        handleTrackQtyChange(manualQty);
+    }
+
+    function handleTrackQtyChange(el) {
+        const winItem = el.closest('.window-item');
+        const layer = winItem.querySelector('.layer-type').value;
+        const manualSel = winItem.querySelector('.manual-qty');
+        const motorSel = winItem.querySelector('.motor-qty');
+        let maxTracks = 5;
+        if (layer === 'both' || layer === 'double_blackout') maxTracks = 2;
+        else if (layer === 'triple') maxTracks = 3;
+        else if (['curtain', 'sheer', 'rateS', 'rateA', 'rateB', 'rateC', 'rateD'].includes(layer)) maxTracks = 1;
+
+        let motor = parseInt(motorSel.value);
+        let manual = parseInt(manualSel.value);
+
+        if (motor + manual > maxTracks) {
+            if (el === motorSel) {
+                if(motor > maxTracks) { motorSel.value = maxTracks; motor = maxTracks; }
+                manualSel.value = maxTracks - motor;
+            } else {
+                if(manual > maxTracks) { manualSel.value = maxTracks; manual = maxTracks; }
+                motorSel.value = maxTracks - manual;
+            }
+        }
+        const powerWrapper = winItem.querySelector('.motor-power-wrapper');
+        if(powerWrapper) powerWrapper.style.display = parseInt(motorSel.value) > 0 ? 'block' : 'none';
+    }
+
+    function addWindow() {
+        const d = document.createElement('div');
+        d.className = 'window-item';
+        /* 使用優化版 Flex 排版結構，替代死板的 Grid */
+        d.innerHTML = `
+            <div class="win-flex-row">
+                <div style="flex: 1.5; min-width: 100px;"><label class="lbl-win-pos">${dict[currentLang].pos}</label><select class="room-type"><option value="living">${dict[currentLang].living}</option><option value="dining">${dict[currentLang].dining}</option><option value="master">${dict[currentLang].master}</option><option value="bed">${dict[currentLang].bed}</option><option value="study">${dict[currentLang].study}</option><option value="maid">${dict[currentLang].maid}</option><option value="toilet">${dict[currentLang].toilet}</option><option value="kitchen">${dict[currentLang].kitchen}</option><option value="other">${dict[currentLang].other}</option></select></div>
+                <div style="flex: 0.8; min-width: 70px;"><label class="lbl-win-num">${dict[currentLang].num}</label><select class="room-num"><option value="">${dict[currentLang].none}</option><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></div>
+                <div style="flex: 0.8; min-width: 80px;"><label class="lbl-win-unit">單位</label><select class="item-unit"><option value="mm">mm</option><option value="cm">cm</option><option value="m">m</option><option value="inch">吋</option><option value="ft">呎</option></select></div>
+                <div style="flex: 1; min-width: 90px;"><label class="lbl-win-w">${dict[currentLang].width}</label><input type="number" class="window-width" value="1500"></div>
+                <div style="flex: 1; min-width: 90px;"><label class="lbl-win-h">${dict[currentLang].height}</label><input type="number" class="window-height" value="2000"></div>
+                <div class="simple-hide open-type-wrapper" style="flex: 1; min-width: 100px;"><label class="lbl-win-open">${dict[currentLang].opening}</label><select class="open-type"><option value="double">${dict[currentLang].double}</option><option value="single">${dict[currentLang].single}</option></select></div>
+            </div>
+            <div class="win-flex-row">
+                <div style="flex: 2; min-width: 180px;"><label class="lbl-win-layer">${dict[currentLang].layer}</label><select class="layer-type" onchange="handleLayerChange(this)"><option value="both">${dict[currentLang].both}</option><option value="double_blackout">${dict[currentLang].double_blackout}</option><option value="triple">${dict[currentLang].triple}</option><option value="curtain">${dict[currentLang].curtain}</option><option value="sheer">${dict[currentLang].sheer}</option><option value="track_only">${dict[currentLang].track_only}</option><option value="rateS">${dict[currentLang].rateS}</option><option value="rateA">${dict[currentLang].rateA}</option><option value="rateB">${dict[currentLang].rateB}</option><option value="rateC">${dict[currentLang].rateC}</option><option value="rateD">${dict[currentLang].rateD}</option><option value="sq_blinds">${dict[currentLang].sq_blinds}</option><option value="sq_honey">${dict[currentLang].sq_honey}</option><option value="sq_zebra">${dict[currentLang].sq_zebra}</option><option value="sq_roman">${dict[currentLang].sq_roman}</option><option value="sq_roller">${dict[currentLang].sq_roller}</option><option value="sq_mosquito">${dict[currentLang].sq_mosquito}</option><option value="sq_other">${dict[currentLang].sq_other}</option></select></div>
+                <div class="custom-price-field" style="display:none; flex: 1; min-width: 120px;"><label class="lbl-sq-price">${dict[currentLang].lbl_sq_price}</label><input type="number" class="custom-rate" placeholder="自訂"></div>
+                <div style="flex: 3; min-width: 200px;" class="simple-hide"><label class="lbl-win-rem">${dict[currentLang].rem}</label><input type="text" class="window-rem" placeholder="例如: #2103 或 半腰窗"></div>
+            </div>
+            <div class="win-sub-box simple-hide">
+                <div class="track-item" style="flex: 1; min-width: 110px;"><label class="lbl-win-m-qty">${dict[currentLang].m_track}</label><select class="manual-qty" onchange="handleTrackQtyChange(this)"><option value="0">0</option><option value="1" selected>1 ${dict[currentLang].rails}</option><option value="2">2 ${dict[currentLang].rails}</option><option value="3">3 ${dict[currentLang].rails}</option><option value="4">4 ${dict[currentLang].rails}</option><option value="5">5 ${dict[currentLang].rails}</option></select></div>
+                <div class="track-item" style="flex: 1; min-width: 110px;"><label class="lbl-win-e-qty">${dict[currentLang].e_track}</label><select class="motor-qty" onchange="handleTrackQtyChange(this)"><option value="0">0</option><option value="1">1 ${dict[currentLang].rails}</option><option value="2">2 ${dict[currentLang].rails}</option><option value="3">3 ${dict[currentLang].rails}</option><option value="4">4 ${dict[currentLang].rails}</option><option value="5">5 ${dict[currentLang].rails}</option></select></div>
+                <div class="track-item" style="flex: 1.5; min-width: 120px;"><label class="lbl-win-e-price">電動軌單價($)</label><input type="number" class="motor-price" value="2500"></div>
+                <div class="track-item motor-power-wrapper" style="display:none; flex: 1; min-width: 100px;"><label class="lbl-motor-power">電動供電</label><select class="motor-power"><option value="wired">${dict[currentLang].wired}</option><option value="battery">${dict[currentLang].battery}</option></select></div>
+                <div style="flex: 1; min-width: 100px; display:flex; align-items:flex-end;"><button class="remove-btn" onclick="this.parentElement.parentElement.parentElement.remove()">${dict[currentLang].delete}</button></div>
+            </div>`;
+        document.getElementById('windowList').appendChild(d);
+        handleLayerChange(d.querySelector('.layer-type'));
+        setUiMode(uiMode);
+    }
+
+    function toggleSection(panelId, btnId) {
+        const panel = document.getElementById(panelId);
+        panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function setPdfMode(mode) {
+        document.getElementById('btn-pdf-cust').classList.remove('active');
+        document.getElementById('btn-pdf-comp').classList.remove('active');
+        if (mode === 'customer') {
+            document.body.classList.add('mode-customer');
+            document.getElementById('btn-pdf-cust').classList.add('active');
+        } else {
+            document.body.classList.remove('mode-customer');
+            document.getElementById('btn-pdf-comp').classList.add('active');
+        }
+    }
+
+    function updateDocumentTitle() {
+        const qNo = document.getElementById('quoteNo').value || '00000';
+        const name = document.getElementById('custName').value || "未命名";
+        const phone = document.getElementById('custPhone').value || "";
+        let docName = "報價單";
+        if(currentDocType === 'invoice') docName = "正式單據";
+        if(currentDocType === 'measure_receipt') docName = "度尺訂金單";
+        document.title = `M${qNo}_${name}${phone ? '_' + phone : ''}_${docName}`;
+    }
+
+    function resetForm() {
+        if(!confirm(dict[currentLang].confirm_reset)) return;
+        ['custName','custPhone','quoteNo','addrEstate','addrBlock','addrFloor','addrUnit','measureDate','installDate','urgentCharge','specialRemarks'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('chkDeductMeasure').checked = false;
+        document.getElementById('depositSelect').value = '0';
+        document.getElementById('customDepositVal').value = 0;
+        document.getElementById('customDepositWrapper').style.display = 'none';
+        document.getElementById('discountSelect').value = '1.0';
+        
+        document.getElementById('windowList').innerHTML = '';
+        addWindow();
+        document.getElementById('resultBox').style.display = 'none';
+        document.getElementById('ui-btn-print').style.display = 'none';
+        updateDocumentTitle();
+    }
+
+    let subTotal = 0, installFee = 0, urgentTotal = 0, finalGrandTotal = 0;
+
+    function generateDoc(type) {
+        currentDocType = type;
+        calculateAll();
+        // 延遲輕微滑動至結果區塊（增強流動裝置體驗）
+        setTimeout(() => {
+            document.getElementById('resultBox').scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+    }
+
+    function calculateAll() {
+        const d = dict[currentLang];
+        const isQuote = (currentDocType === 'quote');
+        const cfRate = parseFloat(document.getElementById('rateCurtainFixed').value)||0;
+        const sfRate = parseFloat(document.getElementById('rateSheerFixed').value)||0;
+        const blkRate = parseFloat(document.getElementById('rateBlackout').value)||0;
+        const iBase = parseFloat(document.getElementById('installBase').value)||0;
+        const rates = { rateS: parseFloat(document.getElementById('rateS').value)||0, rateA: parseFloat(document.getElementById('rateA').value)||0, rateB: parseFloat(document.getElementById('rateB').value)||0, rateC: parseFloat(document.getElementById('rateC').value)||0, rateD: parseFloat(document.getElementById('rateD').value)||0 };
+
+        document.getElementById('resultBox').style.display = 'block';
+        document.getElementById('ui-btn-print').style.display = 'inline-block';
+        updateDocumentTitle();
+
+        const titleVal = document.getElementById('custTitle').value;
+        document.getElementById('lblClientName').innerText = (document.getElementById('custName').value || "---") + " " + (d[titleVal] || "");
+        document.getElementById('lblClientPhone').innerText = document.getElementById('custPhone').value || "---";
+        const addrList = [document.getElementById('addrEstate').value, document.getElementById('addrBlock').value ? `Blk ${document.getElementById('addrBlock').value}` : "", document.getElementById('addrFloor').value ? `${document.getElementById('addrFloor').value}/F` : "", document.getElementById('addrUnit').value ? `Flat ${document.getElementById('addrUnit').value}` : ""].filter(Boolean).join(' ');
+        document.getElementById('lblInvoiceAddress').innerText = addrList || "---";
+        document.getElementById('lblStaffName').innerText = document.getElementById('staffName').value;
+        const qNo = document.getElementById('quoteNo').value;
+        const mDate = document.getElementById('measureDate').value;
+        const iDate = document.getElementById('installDate').value;
+
+        const dateObj = new Date();
+        document.getElementById('invDate').innerText = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
+
+        const invTitleEl = document.getElementById('ui-inv-type');
+        const badge = document.getElementById('invoiceNoWrapper');
+        const quoteDisclaimer = document.getElementById('quoteDisclaimer');
+        const sigSection = document.querySelector('.signature-section');
+
+        document.getElementById('measureReceiptOnlyItem').style.display = 'none';
+        document.querySelector('.table-responsive').style.display = 'block';
+
+        if (currentDocType === 'measure_receipt') {
+            invTitleEl.innerText = d.inv_type_measure;
+            badge.innerText = (mDate && qNo) ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
+            quoteDisclaimer.style.display = 'none';
+            sigSection.style.display = 'none'; // 隱藏簽名區
+            document.querySelector('.pdf-type-selector').style.display = 'flex';
+            document.getElementById('ig-promo').style.display = 'none';
+            document.querySelectorAll('.receipt-highlight, .balance-highlight').forEach(el => el.style.display = 'flex');
+
+            document.getElementById('measureReceiptOnlyItem').style.display = 'block';
+            document.getElementById('measureReceiptOnlyItem').innerHTML = `${d.measure_item_desc}: HK$500`;
+            document.querySelector('.table-responsive').style.display = 'none';
+
+            document.getElementById('subTotalText').innerText = `HK$500`;
+            document.getElementById('installTotalText').innerText = `HK$0`;
+            document.getElementById('summaryInstRow').style.display = 'none';
+            document.getElementById('urgentTotalText').innerText = `HK$0`;
+            document.getElementById('summaryUrgentRow').style.display = 'none';
+            document.getElementById('summaryDiscRow').style.display = 'none';
+            document.getElementById('summaryMeasureDeductRow').style.display = 'none';
+            document.getElementById('grandTotalText').innerText = `HK$500`;
+            document.getElementById('depositPaidText').innerText = `HK$500`;
+            document.getElementById('lblDepositPrintText').innerText = `HK$500`;
+            document.getElementById('balanceDueText').innerText = `HK$0`;
+
+            setPdfMode(document.querySelector('.pdf-type-btn.active').id === 'btn-pdf-cust' ? 'customer' : 'company');
+        } else if (!isQuote) {
+            invTitleEl.innerText = d.inv_type_bill;
+            badge.innerText = qNo ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
+            quoteDisclaimer.style.display = 'none';
+            sigSection.style.display = 'grid';
+            document.querySelector('.pdf-type-selector').style.display = 'flex';
+            document.getElementById('ig-promo').style.display = 'none';
+            document.querySelectorAll('.receipt-highlight, .balance-highlight').forEach(el => el.style.display = 'flex');
+            setPdfMode(document.querySelector('.pdf-type-btn.active').id === 'btn-pdf-cust' ? 'customer' : 'company');
+        } else {
+            invTitleEl.innerText = d.inv_type_quote;
+            badge.innerText = (mDate && qNo) ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
+            quoteDisclaimer.innerText = d.quote_warn;
+            quoteDisclaimer.style.display = 'block';
+            sigSection.style.display = 'none';
+            document.querySelector('.pdf-type-selector').style.display = 'none';
+            document.getElementById('ig-promo').style.display = 'block';
+            document.querySelectorAll('.receipt-highlight, .balance-highlight').forEach(el => el.style.display = 'none');
+            document.body.classList.add('mode-customer');
+        }
+
+        if(mDate || iDate) {
+            document.getElementById('printDateBox').style.display = 'block';
+            document.getElementById('printMeasureDateRow').style.display = mDate ? 'block' : 'none';
+            document.getElementById('printMeasureDate').innerText = mDate;
+            document.getElementById('printInstallDateRow').style.display = iDate ? 'block' : 'none';
+            document.getElementById('printInstallDate').innerText = iDate;
+        } else {
+            document.getElementById('printDateBox').style.display = 'none';
+        }
+
+        const sRem = document.getElementById('specialRemarks').value;
+        if(sRem.trim() !== '') {
+            document.getElementById('printSpecialRemarksBox').style.display = 'block';
+            document.getElementById('printSpecialRemarksText').innerText = sRem;
+        } else {
+            document.getElementById('printSpecialRemarksBox').style.display = 'none';
+        }
+
+        if (currentDocType === 'measure_receipt') return;
+
+        subTotal = 0; installFee = iBase; finalGrandTotal = 0;
+        const tbody = document.getElementById('reportTableBody');
+        tbody.innerHTML = '';
+
+        document.querySelectorAll('.window-item').forEach(item => {
+            const rT = item.querySelector('.room-type').value;
+            const rN = item.querySelector('.room-num').value;
+            const w = parseFloat(item.querySelector('.window-width').value)||0;
+            const h = parseFloat(item.querySelector('.window-height').value)||0;
+            const u = item.querySelector('.item-unit').value;
+            const l = item.querySelector('.layer-type').value;
+            const rem = item.querySelector('.window-rem').value;
+            const op = item.querySelector('.open-type').value;
+            const mQty = parseInt(item.querySelector('.manual-qty').value)||0;
+            const eQty = parseInt(item.querySelector('.motor-qty').value)||0;
+            const ePrice = parseFloat(item.querySelector('.motor-price').value)||0;
+            const mPrice = 0;
+            const pType = item.querySelector('.motor-power').value;
+
+            const isOverHeight = (u==='mm'&&h>2800)||(u==='cm'&&h>280)||(u==='m'&&h>2.8)||(u==='inch'&&h>110)||(u==='ft'&&h>9.2);
+            const wf = u==='mm'?w/304.8 : u==='cm'?w/30.48 : u==='m'?w/0.3048 : u==='inch'?w/12 : w;
+            const hf = u==='mm'?h/304.8 : u==='cm'?h/30.48 : u==='m'?h/0.3048 : u==='inch'?h/12 : h;
+
+            let sz="", ft="", p=0;
+            const isSq = l.startsWith('sq_');
+            let baseRate = 0;
+
+            if (!isSq && l !== 'track_only') {
+                const f = Math.ceil(wf*10)/10;
+                ft = `${f} ${d.unit_ft}`;
+                sz = `${w}${u} (${d.width_label})`;
+                if (l === 'both') baseRate = cfRate + sfRate;
+                else if (l === 'double_blackout') baseRate = cfRate + blkRate;
+                else if (l === 'triple') baseRate = cfRate + sfRate + blkRate;
+                else if (l === 'curtain') baseRate = cfRate;
+                else if (l === 'sheer') baseRate = sfRate;
+                else baseRate = rates[l] || 0;
+                p = Math.round(f * baseRate);
+            } else if (l === 'track_only') {
+                const f = Math.ceil(wf*10)/10;
+                ft = `${f} ${d.unit_ft}`;
+                sz = `${w}${u} (${d.width_label})`;
+                p = 0;
+            } else {
+                const sq = Math.ceil((wf*hf)*10)/10;
+                ft = `${sq} ${d.unit_sqft}`;
+                sz = `${w} x ${h} ${u}`;
+                const cRate = item.querySelector('.custom-rate').value !== "" ? parseFloat(item.querySelector('.custom-rate').value) : null;
+                baseRate = cRate !== null ? cRate : (l === 'sq_mosquito' ? (parseFloat(document.getElementById('rateMosq').value)||40) : 60);
+                p = Math.round(sq * baseRate);
+            }
+
+            if (isOverHeight) { p = p * 2; }
+            const tracksCost = (mQty * mPrice) + (eQty * ePrice);
+            const lineTotal = p + tracksCost;
+            subTotal += lineTotal;
+            let trStyle = d[l] || l;
+            if(isOverHeight) trStyle += ` <span style="color:#b5651d; font-size:11px;">[${d.double_charge}]</span>`;
+            
+            let trackDesc = [];
+            if(!isSq) {
+                if(mQty) trackDesc.push(`${d.lbl_manual}x${mQty}`);
+                if(eQty) trackDesc.push(`${d.lbl_motor}x${eQty}(${d[pType]})`);
+            }
+
+            tbody.innerHTML += `<tr>
+                <td><strong>${rN ? (d[rT]||rT)+' '+rN : (d[rT]||rT)}</strong></td><td>${sz}</td><td>${ft}</td><td>${trStyle}</td><td class="simple-hide">${(!isSq && l!=='track_only')?d[op]:'-'}</td><td class="simple-hide">${trackDesc.length>0?trackDesc.join(', '):'-'}</td><td class="simple-hide">${rem||'-'}</td><td>HK$${lineTotal}</td>
+            </tr>`;
+        });
+
+        document.getElementById('subTotalText').innerText = `HK$${subTotal}`;
+        document.getElementById('installTotalText').innerText = `HK$${installFee}`;
+        urgentTotal = parseFloat(document.getElementById('urgentCharge').value)||0;
+        document.getElementById('urgentTotalText').innerText = `HK$${urgentTotal}`;
+        
+        document.getElementById('summaryInstRow').style.display = 'flex';
+        document.getElementById('summaryUrgentRow').style.display = urgentTotal > 0 ? 'flex' : 'none';
+        document.getElementById('summaryDiscRow').style.display = 'flex';
+
+        applyDiscount();
+    }
+
+    function applyDiscount() {
+        if(currentDocType === 'measure_receipt') return;
+        const discRatio = parseFloat(document.getElementById('discountSelect').value);
+        let finalSub = subTotal * discRatio;
+        const discAmt = subTotal - finalSub;
+
+        if(discAmt > 0) {
+            document.getElementById('lblDiscountText').innerText = `-HK$${Math.round(discAmt)}`;
+            document.getElementById('lblDiscountText').style.display = 'inline';
+        } else {
+            document.getElementById('lblDiscountText').innerText = '-';
+        }
+
+        const deductMeasure = document.getElementById('chkDeductMeasure').checked ? 500 : 0;
+        document.getElementById('summaryMeasureDeductRow').style.display = deductMeasure > 0 ? 'flex' : 'none';
+
+        finalGrandTotal = Math.round(finalSub + installFee + urgentTotal - deductMeasure);
+        document.getElementById('grandTotalText').innerText = `HK$${finalGrandTotal}`;
+        
+        updateDepositDisplay();
+    }
+
+    function updateDepositDisplay() {
+        const depMode = document.getElementById('depositSelect').value;
+        let depositPaid = 0;
+        if (depMode === '0.5') depositPaid = Math.round(finalGrandTotal * 0.5);
+        else if (depMode === '0.3') depositPaid = Math.round(finalGrandTotal * 0.3);
+        else if (depMode === 'measure_only') depositPaid = 500;
+        else if (depMode === 'custom') depositPaid = parseFloat(document.getElementById('customDepositVal').value)||0;
+
+        if (depMode !== 'measure_only' && depositPaid > finalGrandTotal) {
+            depositPaid = finalGrandTotal;
+        }
+
+        document.getElementById('depositPaidText').innerText = `HK$${depositPaid}`;
+        document.getElementById('lblDepositPrintText').innerText = `HK$${depositPaid}`;
+        document.getElementById('balanceDueText').innerText = `HK$${finalGrandTotal - depositPaid}`;
+    }
+
+    function handleDepositChange() {
+        const val = document.getElementById('depositSelect').value;
+        document.getElementById('customDepositWrapper').style.display = val === 'custom' ? 'block' : 'none';
+        if(document.getElementById('resultBox').style.display === 'block') calculateAll();
+    }
+
+    function setUiMode(mode) {
+        uiMode = mode;
+        const btnFull = document.getElementById('btn-mode-full');
+        const btnSimple = document.getElementById('btn-mode-simple');
+        if (mode === 'simple') {
+            document.body.classList.add('mode-simple');
+            btnSimple.classList.add('active');
+            btnFull.classList.remove('active');
+        } else {
+            document.body.classList.remove('mode-simple');
+            btnFull.classList.add('active');
+            btnSimple.classList.remove('active');
+        }
+        if(document.getElementById('resultBox').style.display === 'block') calculateAll();
+    }
+
+    function changeLang(lang, btn) {
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentLang = lang;
+        const d = dict[lang];
+        document.title = d.title;
+
+        // 介面更新
+        document.getElementById('ui-main-title').innerText = d.title;
+        document.getElementById('ui-sum-sub').innerText = d.sum_sub + ":";
+        document.getElementById('ui-sum-inst').innerText = d.sum_inst + ":";
+        document.getElementById('ui-sum-urgent').innerText = d.sum_urgent + ":";
+        document.getElementById('ui-sum-disc').innerText = d.sum_disc + ":";
+        document.getElementById('ui-sum-grand').innerText = d.sum_grand + ":";
+        document.getElementById('ui-sum-measure-deduct').innerText = d.sum_meas_deduct + ":";
+        document.getElementById('ui-sum-dep-paid').innerText = d.sum_dep_paid + ":";
+        document.getElementById('ui-sum-balance').innerText = d.sum_balance + ":";
+        document.getElementById('ui-ft-1').innerText = d.ft1;
+        document.getElementById('ui-ft-2').innerText = d.ft2;
+        document.getElementById('ui-ft-val').innerText = d.ft_val;
+        document.getElementById('ui-ft-dep').innerText = d.ft_dep;
+        document.getElementById('ui-pdf-sel-lbl').innerText = d.pdf_sel;
+        document.getElementById('btn-pdf-cust').innerText = d.pdf_cust;
+        document.getElementById('btn-pdf-comp').innerText = d.pdf_comp;
+        document.getElementById('ui-inv-date').innerText = d.inv_date;
+        document.getElementById('lbl_print_mdate').innerText = d.lbl_m_date;
+        document.getElementById('lbl_print_idate').innerText = d.lbl_i_date;
+        document.getElementById('ui-lbl-inv-addr').innerText = d.inv_addr;
+        document.getElementById('ui-sig-client').innerText = d.sig_client;
+        document.getElementById('ui-sig-comp').innerText = d.sig_comp;
+        document.getElementById('th-size').innerText = d.th_size;
+        document.getElementById('th-ft').innerText = d.th_ft;
+        document.getElementById('th-type').innerText = d.th_type;
+        document.getElementById('th-open').innerText = d.th_open;
+        document.getElementById('th-motor').innerText = d.th_motor;
+        document.getElementById('th-rem').innerText = d.th_rem;
+        document.getElementById('th-sub').innerText = d.th_sub;
+        document.getElementById('ui-btn-quote').innerText = d.btn_quote;
+        document.getElementById('ui-btn-invoice').innerText = d.btn_invoice;
+        document.getElementById('ui-btn-measure-receipt').innerText = d.btn_measure_receipt;
+        document.getElementById('ui-btn-print').innerText = d.btn_print;
+        document.getElementById('ui-btn-reset').innerText = d.btn_reset;
+        document.getElementById('ui-ft-tech').innerText = d.tech;
+
+        // 更新選擇選項
+        document.querySelectorAll('.room-type').forEach(sel => { const v = sel.value; sel.innerHTML = `<option value="living">${d.living}</option><option value="dining">${d.dining}</option><option value="master">${d.master}</option><option value="bed">${d.bed}</option><option value="study">${d.study}</option><option value="maid">${d.maid}</option><option value="toilet">${d.toilet}</option><option value="kitchen">${d.kitchen}</option><option value="other">${d.other}</option>`; sel.value = v; });
+        document.querySelectorAll('.room-num').forEach(sel => { const v = sel.value; sel.options[0].text = d.none; });
+        
+        const ltOpts = {both: d.both, double_blackout: d.double_blackout, triple: d.triple, curtain: d.curtain, sheer: d.sheer, track_only: d.track_only, rateS: d.rateS, rateA: d.rateA, rateB: d.rateB, rateC: d.rateC, rateD: d.rateD, sq_blinds: d.sq_blinds, sq_honey: d.sq_honey, sq_zebra: d.sq_zebra, sq_roman: d.sq_roman, sq_roller: d.sq_roller, sq_mosquito: d.sq_mosquito, sq_other: d.sq_other};
+        document.querySelectorAll('.layer-type').forEach(sel => { const v = sel.value; sel.innerHTML = Object.keys(ltOpts).map(k => `<option value="${k}">${ltOpts[k]}</option>`).join(''); sel.value = v; });
+
+        const otOpts = {double: d.double, single: d.single};
+        document.querySelectorAll('.open-type').forEach(sel => { const v = sel.value; sel.innerHTML = Object.keys(otOpts).map(k => `<option value="${k}">${otOpts[k]}</option>`).join(''); sel.value = v; });
+
+        const ctOpts = {mr: d.mr, ms: d.ms, mrs: d.mrs, dr: d.dr};
+        const cSel = document.getElementById('custTitle');
+        const cVal = cSel.value;
+        cSel.innerHTML = Object.keys(ctOpts).map(k => `<option value="${k}">${ctOpts[k]}</option>`).join('');
+        cSel.value = cVal;
+
+        if(document.getElementById('resultBox').style.display === 'block') calculateAll();
+    }
+</script>
+</body>
+</html>
