@@ -1,17 +1,12 @@
 <!DOCTYPE html>
-<html lang="zh-HK"><head>
-    <!-- 繞過 iPhone 快取專用圖標設定 -->
-<link rel="apple-touch-icon" href="logo.png?v=777">
-<link rel="apple-touch-icon" sizes="152x152" href="logo.png?v=777">
-<link rel="apple-touch-icon" sizes="167x167" href="logo.png?v=777">
-<link rel="apple-touch-icon" sizes="180x180" href="logo.png?v=777">
-
+<html lang="zh-HK">
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes, maximum-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="theme-color" content="#4a3326">
-    <title>M21402_未命名_報價單</title>
+    <title>MCurtain 報價系統</title>
     <style>
         /* ===== 全局變量與重置 ===== */
         :root {
@@ -31,6 +26,10 @@
             --radius: 14px;
             --radius-sm: 8px;
             --transition: 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
         }
         * {
             box-sizing: border-box;
@@ -38,16 +37,20 @@
         }
         html {
             scroll-behavior: smooth;
+            -webkit-text-size-adjust: 100%;
         }
         body {
             font-family: 'Avenir Next', 'Segoe UI', 'Helvetica Neue', 'PingFang HK', 'Noto Sans HK', Arial, sans-serif;
             background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.96) 0, rgba(255, 255, 255, 0.86) 28%, rgba(255, 255, 255, 0) 58%),
                 linear-gradient(180deg, #f7f1e9 0%, #f4ece3 50%, #efe4d7 100%);
-            padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+            padding: max(8px, var(--safe-top)) max(8px, var(--safe-right)) max(8px, var(--safe-bottom)) max(8px, var(--safe-left));
             color: var(--text);
             margin: 0;
             line-height: 1.45;
-            -webkit-text-size-adjust: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         button,
         input,
@@ -55,21 +58,25 @@
         textarea {
             font-family: inherit;
             touch-action: manipulation;
+            font-size: 16px;
+            /* 防止iOS自動縮放 */
         }
 
         /* ===== 容器 ===== */
         .container {
             background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             padding: 16px 18px 24px;
             border-radius: 24px;
             box-shadow: var(--shadow-strong);
             margin: 0 auto;
             border: 1px solid rgba(220, 196, 176, 0.7);
             max-width: 1200px;
+            width: 100%;
         }
 
-        /* ===== 頂部控制欄（無固定定位） ===== */
+        /* ===== 頂部控制欄 ===== */
         .top-ctrl {
             display: flex;
             justify-content: space-between;
@@ -88,6 +95,8 @@
             flex-wrap: wrap;
             align-items: center;
             gap: 8px;
+            flex: 1;
+            min-width: 200px;
         }
         .top-right {
             display: flex;
@@ -111,10 +120,12 @@
             font-size: 12px;
             transition: all 0.2s;
             box-shadow: 0 2px 6px rgba(63, 46, 35, 0.05);
+            touch-action: manipulation;
+            min-height: 36px;
+            min-width: 44px;
         }
-        .lang-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 18px rgba(63, 46, 35, 0.08);
+        .lang-btn:active {
+            transform: scale(0.95);
         }
         .lang-btn.active {
             background: #513c2f;
@@ -141,9 +152,11 @@
             cursor: pointer;
             border-radius: 999px;
             transition: all 0.2s;
+            touch-action: manipulation;
+            min-height: 32px;
         }
-        .mode-btn:hover {
-            transform: translateY(-1px);
+        .mode-btn:active {
+            transform: scale(0.95);
         }
         .mode-btn.active {
             background: var(--brand);
@@ -188,10 +201,12 @@
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 2px 6px rgba(63, 46, 35, 0.15);
+            touch-action: manipulation;
+            min-height: 36px;
+            white-space: nowrap;
         }
-        .btn-parking:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 18px rgba(63, 46, 35, 0.2);
+        .btn-parking:active {
+            transform: scale(0.95);
         }
         .btn-tool {
             background: #fff;
@@ -207,11 +222,12 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
+            touch-action: manipulation;
+            min-height: 36px;
+            white-space: nowrap;
         }
-        .btn-tool:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 18px rgba(63, 46, 35, 0.08);
-            background: #fcfaf7;
+        .btn-tool:active {
+            transform: scale(0.95);
         }
         .btn-tool.active {
             background: var(--brand);
@@ -242,7 +258,7 @@
             font-size: 11px;
             font-weight: 700;
             color: var(--brand);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
 
         /* ===== 單位換算器面板 ===== */
@@ -429,7 +445,7 @@
             grid-column: span 1;
         }
 
-        /* ===== 平台快捷操作（無固定定位） ===== */
+        /* ===== 平台快捷操作 ===== */
         .platform-action-bar {
             margin-bottom: 14px;
             border: 1px solid var(--border);
@@ -478,11 +494,10 @@
             cursor: pointer;
             transition: all 0.2s;
             padding: 0 10px;
+            touch-action: manipulation;
         }
-        .platform-quick-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 18px rgba(63, 46, 35, 0.08);
-            background: #fff;
+        .platform-quick-btn:active {
+            transform: scale(0.95);
         }
 
         /* ===== 頂部設定列 ===== */
@@ -515,11 +530,11 @@
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 2px 6px rgba(63, 46, 35, 0.04);
+            touch-action: manipulation;
+            min-height: 34px;
         }
-        .top-settings-bar .settings-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 8px 18px rgba(63, 46, 35, 0.08);
-            background: #fff;
+        .top-settings-bar .settings-btn:active {
+            transform: scale(0.95);
         }
         .top-settings-bar .settings-btn .badge {
             background: #b5651d;
@@ -575,8 +590,10 @@
             background: rgba(255, 248, 242, 0.6);
             transition: background 0.2s;
             user-select: none;
+            touch-action: manipulation;
+            min-height: 44px;
         }
-        .settings-collapse-inner .mini-panel .mini-header:hover {
+        .settings-collapse-inner .mini-panel .mini-header:active {
             background: rgba(245, 235, 226, 0.8);
         }
         .settings-collapse-inner .mini-panel .mini-body {
@@ -639,10 +656,12 @@
             border: 1px solid #d1c7bd;
             border-radius: var(--radius-sm);
             box-sizing: border-box;
-            font-size: 14px;
+            font-size: 16px;
             background-color: #fff;
             color: #4a3f35;
             transition: border 0.3s, box-shadow 0.3s;
+            -webkit-appearance: none;
+            appearance: none;
         }
         select {
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23513c2f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
@@ -650,8 +669,6 @@
             background-position: right 10px center;
             background-size: 1em;
             padding-right: 34px;
-            appearance: none;
-            -webkit-appearance: none;
         }
         input:focus,
         select:focus,
@@ -692,9 +709,11 @@
             justify-content: space-between;
             align-items: center;
             transition: background 0.3s;
+            touch-action: manipulation;
+            min-height: 48px;
         }
-        .toggle-section-btn:hover {
-            background: #664e3f;
+        .toggle-section-btn:active {
+            transform: scale(0.99);
         }
 
         /* ===== 窗位 ===== */
@@ -716,8 +735,9 @@
             font-size: 18px;
             color: #ccc;
             user-select: none;
+            touch-action: none;
         }
-        .window-item .drag-handle:hover {
+        .window-item .drag-handle:active {
             color: var(--brand);
         }
         .window-item.dragging {
@@ -740,6 +760,15 @@
             flex-wrap: wrap;
             gap: 10px;
             align-items: flex-end;
+            width: 100%;
+        }
+        .win-sub-box .track-item {
+            flex: 1 1 0%;
+            min-width: 90px;
+        }
+        .win-sub-box .track-item select,
+        .win-sub-box .track-item input {
+            width: 100%;
         }
         .remove-btn {
             background-color: #d9a094;
@@ -752,9 +781,11 @@
             font-weight: 700;
             width: 100%;
             transition: background 0.3s;
+            touch-action: manipulation;
+            min-height: 44px;
         }
-        .remove-btn:hover {
-            background-color: #c8877a;
+        .remove-btn:active {
+            transform: scale(0.97);
         }
         .add-btn {
             background: #fff;
@@ -768,11 +799,11 @@
             width: 100%;
             margin-bottom: 18px;
             transition: all 0.3s;
+            touch-action: manipulation;
+            min-height: 52px;
         }
-        .add-btn:hover {
-            background: #fcfaf7;
-            border-color: #8e7f75;
-            transform: translateY(-1px);
+        .add-btn:active {
+            transform: scale(0.98);
         }
         .add-btn.dark {
             background: #8e7f75;
@@ -780,12 +811,8 @@
             border-color: #8e7f75;
             margin-top: -6px;
         }
-        .add-btn.dark:hover {
-            background: #6f5b4c;
-            border-color: #6f5b4c;
-        }
 
-        /* ===== 操作按鈕（無固定定位） ===== */
+        /* ===== 操作按鈕 ===== */
         .action-btns {
             display: flex;
             gap: 10px;
@@ -806,17 +833,14 @@
             color: white;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            touch-action: manipulation;
+            min-height: 48px;
         }
-        .btn-action:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-            opacity: 0.94;
+        .btn-action:active {
+            transform: scale(0.96);
         }
         .btn-action.btn-soft-lite {
             background: #6f5b4c;
-        }
-        .btn-action.btn-soft-lite:hover {
-            background: #5a4a3d;
         }
 
         /* ===== 單據配置 ===== */
@@ -1049,14 +1073,16 @@
             font-weight: 700;
             text-align: center;
             transition: all 0.2s;
+            touch-action: manipulation;
+            min-height: 40px;
+        }
+        .pdf-type-btn:active {
+            transform: scale(0.96);
         }
         .pdf-type-btn.active {
             background: #664e3f;
             color: #fff;
             border-color: #664e3f;
-        }
-        .pdf-type-btn:hover:not(.active) {
-            background: #f2ebe5;
         }
         .logo-box {
             text-align: center;
@@ -1154,6 +1180,7 @@
             align-items: center;
             justify-content: center;
             line-height: 1;
+            touch-action: manipulation;
         }
         .window-photo-thumb span {
             font-size: 9px;
@@ -1165,7 +1192,8 @@
             bottom: 2px;
             left: 2px;
         }
-        /* 客戶下拉建議 */
+
+        /* ===== 客戶下拉建議 ===== */
         .customer-suggest {
             position: relative;
         }
@@ -1191,8 +1219,9 @@
             cursor: pointer;
             font-size: 13px;
             border-bottom: 1px solid #f0ebe5;
+            touch-action: manipulation;
         }
-        .customer-suggest .suggest-list div:hover {
+        .customer-suggest .suggest-list div:active {
             background: var(--brand-soft);
         }
 
@@ -1203,8 +1232,9 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.4);
+            background: rgba(0, 0, 0, 0.4);
             backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
             display: none;
             align-items: center;
             justify-content: center;
@@ -1238,6 +1268,9 @@
             font-size: 24px;
             cursor: pointer;
             color: var(--text-muted);
+            touch-action: manipulation;
+            min-width: 44px;
+            min-height: 44px;
         }
         .modal-box .history-list {
             list-style: none;
@@ -1248,12 +1281,13 @@
             border-bottom: 1px solid #f0ebe5;
             cursor: pointer;
             transition: background 0.2s;
+            touch-action: manipulation;
         }
-        .modal-box .history-list li:hover {
+        .modal-box .history-list li:active {
             background: var(--brand-soft);
         }
 
-        /* ===== 歷史/同步/模板 共用 ===== */
+        /* ===== 歷史/同步/模板 ===== */
         .history-bar,
         .window-template-bar,
         .sync-bar {
@@ -1309,6 +1343,12 @@
             cursor: pointer;
             transition: all 0.2s;
             white-space: nowrap;
+            touch-action: manipulation;
+        }
+        .history-btn:active,
+        .template-action-btn:active,
+        .sync-btn:active {
+            transform: scale(0.95);
         }
         .history-btn.primary,
         .template-action-btn.primary,
@@ -1316,12 +1356,6 @@
             background: #6f5b4c;
             color: #fff;
             border-color: #6f5b4c;
-        }
-        .history-btn:hover,
-        .template-action-btn:hover,
-        .sync-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(63, 46, 35, 0.1);
         }
         .history-select,
         .window-template-select,
@@ -1334,6 +1368,7 @@
             padding: 6px 10px;
             box-sizing: border-box;
             font-size: 12px;
+            width: 100%;
         }
         .history-tools {
             display: grid;
@@ -1637,15 +1672,18 @@
             }
         }
 
-        /* ===== 響應式 ===== */
+        /* ===== 響應式 - 手機 ===== */
         @media (max-width: 767px) {
             body {
-                padding: max(6px, env(safe-area-inset-top)) max(6px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(6px, env(safe-area-inset-left));
+                padding: max(6px, var(--safe-top)) max(6px, var(--safe-right)) max(8px, var(--safe-bottom)) max(6px, var(--safe-left));
+                font-size: 15px;
             }
             .container {
                 padding: 12px 10px 16px;
                 border-radius: 12px;
                 border: none;
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
             }
             .merchant-dashboard {
                 grid-template-columns: 1fr 1fr;
@@ -1675,7 +1713,15 @@
                 text-align: center;
                 gap: 10px;
             }
-            .mode-toggle-container,
+            .top-left {
+                width: 100%;
+                justify-content: center;
+            }
+            .mode-toggle-container {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
             .lang-group {
                 width: 100%;
                 justify-content: center;
@@ -1685,6 +1731,7 @@
                 text-align: center;
                 font-size: 11px;
                 padding: 5px 8px;
+                min-height: 40px;
             }
             .platform-action-bar {
                 padding: 8px;
@@ -1700,7 +1747,7 @@
             .platform-quick-btn {
                 font-size: 11px;
                 padding: 6px 4px;
-                min-height: 34px;
+                min-height: 40px;
             }
             .top-settings-bar {
                 padding: 4px 8px;
@@ -1708,6 +1755,7 @@
                 overflow-x: auto;
                 flex-wrap: nowrap;
                 justify-content: flex-start;
+                -webkit-overflow-scrolling: touch;
             }
             .top-settings-bar .settings-label {
                 font-size: 10px;
@@ -1717,6 +1765,7 @@
                 font-size: 10px;
                 padding: 4px 10px;
                 white-space: nowrap;
+                min-height: 34px;
             }
             .settings-collapse-wrap.open {
                 padding: 8px;
@@ -1724,6 +1773,7 @@
             .settings-collapse-inner .mini-panel .mini-header {
                 font-size: 12px;
                 padding: 6px 10px;
+                min-height: 44px;
             }
             .settings-collapse-inner .mini-panel .mini-body {
                 padding: 8px 10px;
@@ -1744,6 +1794,16 @@
             .window-template-actions,
             .sync-actions {
                 width: 100%;
+                flex-wrap: wrap;
+            }
+            .history-actions button,
+            .window-template-actions button,
+            .sync-actions button {
+                flex: 1;
+                min-width: 60px;
+                font-size: 11px;
+                padding: 6px 8px;
+                min-height: 40px;
             }
             .history-tools {
                 grid-template-columns: 1fr;
@@ -1753,6 +1813,7 @@
             }
             .sync-toggle {
                 justify-content: center;
+                min-height: 40px;
             }
             .logo-text {
                 font-size: 22px;
@@ -1777,6 +1838,7 @@
                 padding: 10px 8px;
                 font-size: 13px;
                 min-width: 0;
+                min-height: 48px;
             }
             .pdf-type-selector {
                 flex-direction: column;
@@ -1784,6 +1846,7 @@
             }
             .pdf-type-btn {
                 width: 100%;
+                min-height: 44px;
             }
             .summary-wrapper {
                 align-items: stretch;
@@ -1815,11 +1878,19 @@
             }
             table {
                 min-width: 480px;
+                font-size: 12px;
+            }
+            th,
+            td {
+                padding: 6px 6px;
+                font-size: 11px;
             }
             input,
             select,
             textarea {
-                font-size: 15px !important;
+                font-size: 16px !important;
+                /* 防止iOS縮放 */
+                min-height: 44px;
             }
             .lang-btn,
             .mode-btn,
@@ -1831,20 +1902,22 @@
             .history-btn,
             .template-action-btn,
             .sync-btn {
-                min-height: 36px;
+                min-height: 44px;
             }
             .staff-select-wrap select {
                 width: 80px;
                 font-size: 11px;
-                min-height: 28px;
+                min-height: 34px;
             }
             .btn-parking {
                 font-size: 11px;
                 padding: 4px 10px;
+                min-height: 36px;
             }
             .btn-tool {
                 font-size: 11px;
                 padding: 4px 10px;
+                min-height: 36px;
             }
             .converter-grid {
                 grid-template-columns: 1fr;
@@ -1883,7 +1956,68 @@
                 padding-left: 60px;
                 font-size: 12px;
             }
+            .win-sub-box {
+                padding: 10px;
+                gap: 8px;
+            }
+            .win-sub-box .track-item {
+                flex: 1 1 45%;
+                min-width: 80px;
+            }
+            .win-flex-row {
+                gap: 8px;
+            }
+            .win-flex-row>div {
+                flex: 1 1 45%;
+                min-width: 80px;
+            }
+            .window-live-box {
+                font-size: 11px;
+                gap: 8px 12px;
+                padding: 6px 10px;
+            }
+            .receipt-config-box {
+                flex-direction: column;
+                padding: 12px;
+            }
+            .receipt-config-box>div {
+                min-width: 100%;
+            }
+            .invoice-company-info {
+                font-size: 11px;
+            }
+            .inv-number-badge {
+                font-size: 14px;
+            }
+            #measureReceiptOnlyItem {
+                font-size: 14px;
+                padding: 16px 12px;
+            }
+            .add-btn {
+                min-height: 48px;
+                font-size: 14px;
+                padding: 12px;
+            }
+            .top-left .mode-toggle-container .mode-btn {
+                font-size: 11px;
+                padding: 4px 10px;
+                min-height: 34px;
+            }
+            .top-left .staff-select-wrap {
+                font-size: 11px;
+            }
+            .top-right .lang-group .lang-btn {
+                font-size: 11px;
+                padding: 4px 8px;
+                min-height: 34px;
+            }
+            .top-ctrl .top-right {
+                width: 100%;
+                justify-content: center;
+            }
         }
+
+        /* ===== 響應式 - 平板 ===== */
         @media (min-width: 768px) and (max-width: 1023px) {
             body {
                 padding: 16px;
@@ -1927,7 +2061,13 @@
             .converter-grid {
                 grid-template-columns: 1fr 1fr;
             }
+            .win-sub-box .track-item {
+                flex: 1 1 30%;
+                min-width: 100px;
+            }
         }
+
+        /* ===== 響應式 - 桌面 ===== */
         @media (min-width: 1024px) {
             body {
                 padding: 28px 36px;
@@ -1977,6 +2117,10 @@
                 align-items: flex-end;
                 gap: 12px;
             }
+            .win-sub-box .track-item {
+                flex: 1 1 0%;
+                min-width: 90px;
+            }
             .receipt-config-box {
                 flex-wrap: nowrap;
                 align-items: flex-end;
@@ -2004,12 +2148,75 @@
                 padding: 4px 18px;
             }
         }
+
+        /* ===== 動畫減少 ===== */
         @media (prefers-reduced-motion: reduce) {
             * {
                 animation-duration: 0.01ms !important;
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
                 scroll-behavior: auto !important;
+            }
+        }
+
+        /* ===== 修復：手機版路軌選擇強制可見 ===== */
+        @media (max-width: 767px) {
+            body:not(.mode-simple) .win-sub-box {
+                display: flex !important;
+            }
+            body:not(.mode-simple) .win-sub-box .track-item {
+                display: block !important;
+            }
+            body:not(.mode-simple) .custom-price-field {
+                display: flex !important;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            body:not(.mode-simple) .custom-price-field input {
+                flex: 1;
+                min-width: 80px;
+            }
+            body:not(.mode-simple) .open-type-wrapper {
+                display: block !important;
+            }
+            body:not(.mode-simple) .motor-power-wrapper {
+                display: block !important;
+            }
+            body:not(.mode-simple) .window-photo-box {
+                display: block !important;
+            }
+            .btn-action,
+            .add-btn,
+            .remove-btn,
+            .toggle-section-btn,
+            .mode-btn,
+            .lang-btn,
+            .btn-parking,
+            .btn-tool,
+            .platform-quick-btn,
+            .history-btn,
+            .template-action-btn,
+            .sync-btn,
+            .pdf-type-btn {
+                min-height: 44px;
+                padding: 8px 12px;
+                touch-action: manipulation;
+                cursor: pointer;
+                position: relative;
+                z-index: 1;
+            }
+            input,
+            select,
+            textarea,
+            button,
+            .check-container {
+                touch-action: manipulation;
+            }
+            .modal-box {
+                -webkit-overflow-scrolling: touch;
+            }
+            .table-responsive {
+                -webkit-overflow-scrolling: touch;
             }
         }
     </style>
@@ -2043,13 +2250,9 @@
         </div>
     </div>
 
-    <!-- ===== 快捷鍵提示條 ===== -->
-    
-
     <!-- ===== 單位換算器 ===== -->
     <div class="converter-panel" id="converterPanel">
         <div class="converter-grid">
-            <!-- 長度換算 -->
             <div class="converter-section">
                 <h4 id="conv-length-title">📏 長度換算</h4>
                 <div class="conv-row">
@@ -2057,7 +2260,7 @@
                     <input type="number" id="convLengthInput" value="1" step="any" min="0" oninput="convertLength()">
                     <select id="convLengthUnit" onchange="convertLength()">
                         <option value="mm">mm</option>
-                        <option value="cm" selected="">cm</option>
+                        <option value="cm" selected>cm</option>
                         <option value="m">m</option>
                         <option value="inch">in</option>
                         <option value="ft">ft</option>
@@ -2073,7 +2276,6 @@
                     <div class="conv-result-item"><div class="unit-label">yd</div><div class="unit-value" id="cl-yd">0.01</div></div>
                 </div>
             </div>
-            <!-- 面積換算 + 視覺化矩形 -->
             <div class="converter-section">
                 <h4 id="conv-area-title">📐 面積換算 (長 × 寬)</h4>
                 <div class="conv-area-inputs">
@@ -2089,7 +2291,7 @@
                         <label id="conv-lbl-unit">單位</label>
                         <select id="convAreaUnit" onchange="convertArea()">
                             <option value="mm">mm</option>
-                            <option value="cm" selected="">cm</option>
+                            <option value="cm" selected>cm</option>
                             <option value="m">m</option>
                             <option value="inch">in</option>
                             <option value="ft">ft</option>
@@ -2148,11 +2350,6 @@
         </div>
     </div>
 
-    <!-- ===== 平台快捷操作（無固定定位） ===== -->
-    <div class="platform-action-bar">
-        
-    </div>
-
     <!-- ===== 主容器 ===== -->
     <div class="container">
         <div class="logo-box">
@@ -2201,7 +2398,6 @@
         <!-- ===== 摺疊：模板 + 歷史 + 同步 ===== -->
         <div class="settings-collapse-wrap collapsed" id="settingsCollapseWrap">
             <div class="settings-collapse-inner">
-                <!-- 模板 -->
                 <div class="mini-panel" id="miniTemplatePanel">
                     <div class="mini-header" onclick="toggleMiniPanel('miniTemplatePanel')">
                         <span id="ui-template-title">窗位模板</span><span class="arrow">▼</span>
@@ -2221,7 +2417,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- 歷史 -->
                 <div class="mini-panel" id="miniHistoryPanel">
                     <div class="mini-header" onclick="toggleMiniPanel('miniHistoryPanel')">
                         <span id="ui-history-title">歷史單據</span><span class="arrow">▼</span>
@@ -2252,7 +2447,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- 同步 -->
                 <div class="mini-panel" id="miniSyncPanel">
                     <div class="mini-header" onclick="toggleMiniPanel('miniSyncPanel')">
                         <span id="ui-sync-title">雲端同步</span><span class="arrow">▼</span>
@@ -2296,11 +2490,11 @@
                     <div class="suggest-list" id="custSuggestList"></div>
                 </div>
                 <div class="col"><label id="ui-lbl-ctitle">稱謂:</label><select id="custTitle" onchange="autoSaveDraft()"><option value="mr">先生</option><option value="ms">小姐</option><option value="mrs">太太</option><option value="dr">博士</option></select></div>
-                <div class="col"><label id="ui-lbl-cphone">聯絡電話:</label><input type="number" id="custPhone" placeholder="例: 61234567" oninput="updateDocumentTitle();tryAutofillCustomerByPhone(false);autoSaveDraft()" onblur="tryAutofillCustomerByPhone(true)"></div>
+                <div class="col"><label id="ui-lbl-cphone">聯絡電話:</label><input type="tel" id="custPhone" placeholder="例: 61234567" oninput="updateDocumentTitle();tryAutofillCustomerByPhone(false);autoSaveDraft()" onblur="tryAutofillCustomerByPhone(true)"></div>
                 <div class="col">
                     <label id="ui-lbl-qnum">單號 (5位):</label>
                     <div style="display:flex;align-items:center;"><span style="font-weight:700;margin-right:5px;font-size:15px;color:#513c2f;">#M</span>
-                        <input type="number" id="quoteNo" placeholder="00001" oninput="if(this.value.length&gt;5)this.value=this.value.slice(0,5);updateDocumentTitle();autoSaveDraft()">
+                        <input type="number" id="quoteNo" placeholder="00001" oninput="if(this.value.length>5)this.value=this.value.slice(0,5);updateDocumentTitle();autoSaveDraft()">
                     </div>
                 </div>
                 <div class="col" style="min-width:120px;">
@@ -2334,7 +2528,7 @@
                                 <input type="time" id="measureEndTime" style="flex:1;width:100%;" onchange="autoSaveDraft()">
                             </div>
                         </div>
-                        <button onclick="generateICS()" style="background:#b5651d;color:#fff;border:none;padding:8px 14px;border-radius:var(--radius-sm);cursor:pointer;font-weight:700;flex:1;min-width:120px;box-shadow:0 2px 5px rgba(0,0,0,0.1);display:flex;justify-content:center;align-items:center;gap:4px;height:36px;font-size:13px;">📅 行事曆</button>
+                        <button onclick="generateICS()" style="background:#b5651d;color:#fff;border:none;padding:8px 14px;border-radius:var(--radius-sm);cursor:pointer;font-weight:700;flex:1;min-width:120px;box-shadow:0 2px 5px rgba(0,0,0,0.1);display:flex;justify-content:center;align-items:center;gap:4px;height:36px;font-size:13px;touch-action:manipulation;">📅 行事曆</button>
                     </div>
                 </div>
                 <div class="col" style="margin-top:8px;min-width:100%;">
@@ -2363,7 +2557,7 @@
               <div style="flex:3;min-width:160px;" class="simple-hide"><label class="lbl-win-rem">備註</label><input type="text" class="window-rem" placeholder="例如: #2103 或 半腰窗" oninput="autoSaveDraft()"></div>
             </div>
             <div class="win-sub-box simple-hide">
-              <div class="track-item" style="flex: 1 1 0%; min-width: 90px; display: block;"><label class="lbl-win-m-qty">手動路軌</label><select class="manual-qty" onchange="handleTrackQtyChange(this);if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"><option value="0">0</option><option value="1" selected="">1 支</option><option value="2">2 支</option><option value="3">3 支</option><option value="4">4 支</option><option value="5">5 支</option></select></div>
+              <div class="track-item" style="flex: 1 1 0%; min-width: 90px; display: block;"><label class="lbl-win-m-qty">手動路軌</label><select class="manual-qty" onchange="handleTrackQtyChange(this);if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"><option value="0">0</option><option value="1" selected>1 支</option><option value="2">2 支</option><option value="3">3 支</option><option value="4">4 支</option><option value="5">5 支</option></select></div>
               <div class="track-item" style="flex: 1 1 0%; min-width: 90px; display: block;"><label class="lbl-win-e-qty">電動路軌</label><select class="motor-qty" onchange="handleTrackQtyChange(this);if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"><option value="0">0</option><option value="1">1 支</option><option value="2">2 支</option><option value="3">3 支</option><option value="4">4 支</option><option value="5">5 支</option></select></div>
               <div class="track-item" style="flex: 1.3 1 0%; min-width: 100px; display: block;"><label class="lbl-win-m-price">手動軌單價($)</label><input type="number" class="manual-price" value="180" oninput="if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"></div>
               <div class="track-item" style="flex: 1.3 1 0%; min-width: 100px; display: block;"><label class="lbl-win-e-price">電動軌單價($)</label><input type="number" class="motor-price" value="2500" oninput="if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"></div>
@@ -2432,7 +2626,7 @@
             </div>
         </div>
 
-        <!-- ===== 操作按鈕（無固定定位） ===== -->
+        <!-- ===== 操作按鈕 ===== -->
         <div class="action-btns">
             <button class="btn-action" id="ui-btn-reset" style="background:#d9827c;" onclick="resetForm()">🔄 一鍵清零</button>
             <button class="btn-action" id="ui-btn-quote" style="background:#8e7f75;" onclick="generateDoc('quote')">📝 報價單</button>
@@ -2463,7 +2657,7 @@
         </div>
 
         <!-- ===== 結果區 ===== -->
-        <div class="result-box open" id="resultBox" style="display: block;">
+        <div class="result-box" id="resultBox">
             <div class="pdf-type-selector" style="display: none;">
                 <span style="font-size:13px;color:#513c2f;font-weight:700;width:100%;" id="ui-pdf-sel-lbl">顯示模式：</span>
                 <button class="pdf-type-btn active" id="btn-pdf-cust" onclick="setPdfMode('customer')">客戶版 (隱藏地址)</button>
@@ -2480,7 +2674,6 @@
                 </div>
             </div>
 
-            <!-- ===== 客戶資訊（每行一個，靠左對齊） ===== -->
             <div class="invoice-client-info">
                 <div class="info-line">
                     <strong>Customer:</strong>
@@ -2525,13 +2718,11 @@
                 </div>
                 <div class="summary-item" id="summaryMeasureDeductRow" style="display: flex; color: rgb(181, 101, 29); font-weight: 700;"><span id="ui-sum-measure-deduct">扣除預收度尺費:</span><span>-HK$500</span></div>
                 <div class="summary-item grand-total"><span id="ui-sum-grand">最終總價:</span><span id="grandTotalText">HK$3905</span></div>
-                <!-- 訂金行：正式單據 / 度尺訂金單 時顯示 -->
                 <div class="summary-item receipt-highlight" id="summaryDepRow" style="display: none;">
                     <span id="ui-sum-dep-paid">已付訂金 (首期):</span>
                     <span id="depositPaidText">HK$1172</span>
                     <span id="lblDepositPrintText" style="display:none;font-weight:700;">HK$1172</span>
                 </div>
-                <!-- 尾款行：正式單據 時顯示，餘額為 0 時自動隱藏 -->
                 <div class="summary-item balance-highlight" id="summaryBalRow" style="display: none;">
                     <span id="ui-sum-balance">尚欠尾款:</span>
                     <span id="balanceDueText">HK$2733</span>
@@ -2567,7 +2758,7 @@
     <!-- ======================= JAVASCRIPT ========================= -->
     <!-- ========================================================== -->
     <script>
-        // ===== 語言字典 (精簡版，保留核心) =====
+        // ===== 語言字典 =====
         const dict = {
             zh_tw: {
                 title: "窗簾及工程單據系統", pos: "位置", num: "編號", width: "闊度", height: "高度",
@@ -2654,7 +2845,6 @@
                 reserve_lr: "左右預留(mm)", reserve_tb: "上下預留(mm)",
                 live_ft_size: "換算尺寸", live_area: "面積", live_make: "製作尺寸",
                 live_sq_price: "單價", live_sq_subtotal: "小計",
-                sq_honey: "風琴簾",
                 btn_wa_copy: "📲 複製 WhatsApp 報價",
                 btn_install_copy: "📋 複製安裝紙",
                 calc_export_csv: "📥 匯出 CSV",
@@ -2667,7 +2857,6 @@
                 dep_none: "未付訂金", dep_measure_only: "淨收 $500 度尺訂金",
                 dep_50: "支付 50% 訂金", dep_30: "支付 30% 訂金",
                 dep_custom: "自訂 ($)",
-                platform_ready: "跨平台快捷操作", platform_shortcut: "快捷",
                 quick_quote: "報價", quick_invoice: "正式單據",
                 quick_print: "列印/PDF", quick_top: "回到頂部",
                 panel_tools: "進階工具", tools_toggle: "➕ 進階工具",
@@ -2769,7 +2958,6 @@
                 reserve_lr: "左右预留(mm)", reserve_tb: "上下预留(mm)",
                 live_ft_size: "换算尺寸", live_area: "面积", live_make: "制作尺寸",
                 live_sq_price: "单价", live_sq_subtotal: "小计",
-                sq_honey: "风琴帘",
                 btn_wa_copy: "📲 复制 WhatsApp 报价",
                 btn_install_copy: "📋 复制安装纸",
                 calc_export_csv: "📥 导出 CSV",
@@ -2782,7 +2970,6 @@
                 dep_none: "未付订金", dep_measure_only: "净收 $500 度尺订金",
                 dep_50: "支付 50% 订金", dep_30: "支付 30% 订金",
                 dep_custom: "自订 ($)",
-                platform_ready: "跨平台快捷操作", platform_shortcut: "快捷",
                 quick_quote: "报价", quick_invoice: "正式单据",
                 quick_print: "打印/PDF", quick_top: "回到顶部",
                 panel_tools: "进阶工具", tools_toggle: "➕ 进阶工具",
@@ -2888,7 +3075,6 @@
                 reserve_lr: "Left/Right Allowance (mm)", reserve_tb: "Top/Bottom Allowance (mm)",
                 live_ft_size: "Converted Size", live_area: "Area", live_make: "Production Size",
                 live_sq_price: "Unit Price", live_sq_subtotal: "Subtotal",
-                sq_honey: "Pleated / Honeycomb",
                 btn_wa_copy: "📲 Copy WhatsApp Quote",
                 btn_install_copy: "📋 Copy Installation Sheet",
                 calc_export_csv: "📥 Export CSV",
@@ -2901,7 +3087,6 @@
                 dep_none: "No Deposit", dep_measure_only: "Measurement Deposit $500",
                 dep_50: "Pay 50% Deposit", dep_30: "Pay 30% Deposit",
                 dep_custom: "Custom ($)",
-                platform_ready: "Cross-platform Quick Actions", platform_shortcut: "Shortcut",
                 quick_quote: "Quote", quick_invoice: "Invoice",
                 quick_print: "Print/PDF", quick_top: "Back To Top",
                 panel_tools: "Advanced Tools", tools_toggle: "➕ Advanced Tools",
@@ -2977,6 +3162,8 @@
             ta.value = text;
             ta.style.position = 'fixed';
             ta.style.opacity = '0';
+            ta.style.left = '-9999px';
+            ta.style.top = '-9999px';
             document.body.appendChild(ta);
             ta.select();
             document.execCommand('copy');
@@ -3623,7 +3810,7 @@
             autoSaveDraft();
         }
 
-        // ===== 複製窗位 (合併功能) =====
+        // ===== 複製窗位 =====
         function duplicateLastWindow() {
             const windows = document.querySelectorAll('.window-item');
             if (!windows.length) { addWindow(); return; }
@@ -3837,7 +4024,8 @@
             rm.className = 'photo-remove-btn';
             rm.innerText = 'x';
             rm.title = dict[currentLang].photo_remove || '刪除';
-            rm.onclick = function() { removeWindowPhoto(this); };
+            rm.onclick = function(e) { e.stopPropagation();
+                removeWindowPhoto(this); };
             const img = document.createElement('img');
             img.src = photo.dataUrl;
             img.alt = photo.type;
@@ -4227,239 +4415,293 @@
             autoSaveDraft();
         }
 
+        // ===== 安全 DOM 輔助 =====
+        function safeSetText(el, text) { if (el) el.innerText = text; }
+
+        function safeSetDisplay(el, display) { if (el) el.style.display = display; }
+
         // ===== 主要計算 =====
         function calculateAll() {
-            const d = dict[currentLang],
-                isQuote = (currentDocType === 'quote');
-            const iBase = parseFloat($('installBase').value) || 0,
-                ctx = getRateContext();
-            const resultBox = $('resultBox');
-            resultBox.classList.remove('open');
-            void resultBox.offsetWidth;
-            resultBox.style.display = 'block';
-            resultBox.classList.add('open');
-            $('ui-btn-print').style.display = 'inline-block';
-            if (currentDocType === 'parking') {
-                $('lblClientName').innerText = tempParkingSurname;
-                $('phoneWrapperLine').style.display = 'none';
-                $('addrLineWrapper').style.display = 'none';
-            } else {
-                const titleVal = $('custTitle').value,
-                    nameVal = $('custName').value;
-                $('lblClientName').innerText = nameVal ? (nameVal + " " + (d[titleVal] || "")) : "---";
-                $('lblClientPhone').innerText = $('custPhone').value || "---";
-                $('phoneWrapperLine').style.display = 'block';
-                const addrList = [$('addrEstate').value, $('addrBlock').value ? `Blk ${$('addrBlock').value}` : "", $(
-                        'addrFloor').value ? `${$('addrFloor').value}/F` : "", $('addrUnit').value ? `Flat ${$('addrUnit')
-                        .value}` : ""].filter(Boolean).join(' ');
-                $('lblInvoiceAddress').innerText = addrList || "---";
-                $('addrLineWrapper').style.display = 'block';
-            }
-            $('lblStaffName').innerText = $('staffName').value;
-            const qNo = $('quoteNo').value,
-                mDate = $('measureDate').value,
-                iDate = $('installDate').value;
-            const dateObj = new Date();
-            $('invDate').innerText =
-                `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
-            const invTitleEl = $('ui-inv-type'),
-                badge = $('invoiceNoWrapper'),
-                quoteDisclaimer = $('quoteDisclaimer'),
-                sigSection = document.querySelector('.signature-section');
-            updateDocumentTitle();
-            if (currentDocType === 'parking') {
-                invTitleEl.innerText = d.inv_type_bill;
-                badge.innerText = qNo ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
-                quoteDisclaimer.style.display = 'none';
-                sigSection.style.display = 'none';
-                document.querySelector('.pdf-type-selector').style.display = 'flex';
-                $('ig-promo').style.display = 'none';
-                $('measureReceiptOnlyItem').style.display = 'block';
-                $('measureReceiptOnlyItem').innerHTML = `${d.parking_item_desc}: HK$${tempParkingAmount}`;
-                document.querySelector('.table-responsive').style.display = 'none';
-                $('subTotalText').innerText = `HK$${tempParkingAmount}`;
-                $('installTotalText').innerText = `HK$0`;
-                $('summaryInstRow').style.display = 'none';
-                $('urgentTotalText').innerText = `HK$0`;
-                $('summaryUrgentRow').style.display = 'none';
-                $('summaryDiscRow').style.display = 'none';
-                $('summaryMeasureDeductRow').style.display = 'none';
-                $('grandTotalText').innerText = `HK$${tempParkingAmount}`;
-                $('summaryDepRow').style.display = 'none';
-                $('summaryBalRow').style.display = 'none';
-                setPdfMode(document.querySelector('.pdf-type-btn.active').id === 'btn-pdf-cust' ? 'customer' :
-                    'company');
-                $('printDateBox').style.display = 'none';
-                $('printSpecialRemarksBox').style.display = 'none';
-                return;
-            }
-            $('measureReceiptOnlyItem').style.display = 'none';
-            document.querySelector('.table-responsive').style.display = 'block';
-            if (currentDocType === 'measure_receipt') {
-                invTitleEl.innerText = d.inv_type_measure;
-                badge.innerText = (mDate && qNo) ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
-                quoteDisclaimer.style.display = 'none';
-                sigSection.style.display = 'none';
-                document.querySelector('.pdf-type-selector').style.display = 'flex';
-                $('ig-promo').style.display = 'none';
-                document.querySelectorAll('.receipt-highlight, .balance-highlight').forEach(el => el.style.display =
-                    'flex');
-                $('measureReceiptOnlyItem').style.display = 'block';
-                $('measureReceiptOnlyItem').innerHTML = `${d.measure_item_desc}: HK$500`;
-                document.querySelector('.table-responsive').style.display = 'none';
-                $('subTotalText').innerText = `HK$500`;
-                $('installTotalText').innerText = `HK$0`;
-                $('summaryInstRow').style.display = 'none';
-                $('urgentTotalText').innerText = `HK$0`;
-                $('summaryUrgentRow').style.display = 'none';
-                $('summaryDiscRow').style.display = 'none';
-                $('summaryMeasureDeductRow').style.display = 'none';
-                $('grandTotalText').innerText = `HK$500`;
-                $('depositPaidText').innerText = `HK$500`;
-                $('lblDepositPrintText').innerText = `HK$500`;
-                // 度尺訂金單尾款為 0，隱藏尾款行
-                $('summaryBalRow').style.display = 'none';
-                // 但訂金行顯示
-                $('summaryDepRow').style.display = 'flex';
-                setPdfMode(document.querySelector('.pdf-type-btn.active').id === 'btn-pdf-cust' ? 'customer' :
-                    'company');
-                return;
-            } else if (!isQuote) {
-                // 正式單據
-                invTitleEl.innerText = d.inv_type_bill;
-                badge.innerText = qNo ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
-                quoteDisclaimer.style.display = 'none';
-                sigSection.style.display = 'grid';
-                document.querySelector('.pdf-type-selector').style.display = 'flex';
-                $('ig-promo').style.display = 'none';
-                // 顯示訂金與尾款行
-                document.querySelectorAll('.receipt-highlight, .balance-highlight').forEach(el => el.style.display =
-                    'flex');
-                setPdfMode(document.querySelector('.pdf-type-btn.active').id === 'btn-pdf-cust' ? 'customer' :
-                    'company');
-            } else {
-                // 報價單
-                invTitleEl.innerText = d.inv_type_quote;
-                badge.innerText = (mDate && qNo) ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
-                quoteDisclaimer.innerText = d.quote_warn;
-                quoteDisclaimer.style.display = 'block';
-                sigSection.style.display = 'none';
-                document.querySelector('.pdf-type-selector').style.display = 'none';
-                $('ig-promo').style.display = 'block';
-                // 報價單隱藏訂金與尾款
-                document.querySelectorAll('.receipt-highlight, .balance-highlight').forEach(el => el.style.display =
-                    'none');
-                document.body.classList.add('mode-customer');
-            }
-            if (mDate || iDate) {
-                $('printDateBox').style.display = 'block';
-                $('printMeasureDateRow').style.display = mDate ? 'block' : 'none';
-                $('printMeasureDate').innerText = mDate ? formatDateForDisplay(mDate) : '';
-                $('printInstallDateRow').style.display = iDate ? 'block' : 'none';
-                $('printInstallDate').innerText = iDate ? formatDateForDisplay(iDate) : '';
-            } else { $('printDateBox').style.display = 'none'; }
-            const sRem = $('specialRemarks').value;
-            if (sRem.trim() !== '') { $('printSpecialRemarksBox').style.display = 'block';
-                $('printSpecialRemarksText').innerText = sRem; } else { $('printSpecialRemarksBox').style.display =
-                    'none'; }
-            if (currentDocType === 'measure_receipt') return;
-            subTotal = 0;
-            installFee = iBase;
-            finalGrandTotal = 0;
-            calcDetailRows = [];
-            const tbody = $('reportTableBody');
-            tbody.innerHTML = '';
-            document.querySelectorAll('.window-item').forEach(item => {
-                const rT = item.querySelector('.room-type').value,
-                    rN = item.querySelector('.room-num').value;
-                const l = item.querySelector('.layer-type').value,
-                    rem = item.querySelector('.window-rem').value;
-                const op = item.querySelector('.open-type').value,
-                    pType = item.querySelector('.motor-power').value;
-                const mQty = parseInt(item.querySelector('.manual-qty').value) || 0;
-                const eQty = parseInt(item.querySelector('.motor-qty').value) || 0;
-                const calc = computeWindowLine(item, d, ctx);
-                const lineTotal = calc.lineTotal;
-                subTotal += lineTotal;
-                let trStyle = d[l] || l;
-                if (calc.isOverHeight) trStyle +=
-                    ` <span style="color:#b5651d;font-size:10px;">[${d.double_charge}]</span>`;
-                if (calc.isWindowDouble) trStyle +=
-                    ` <span style="color:#8b5a2b;font-size:10px;font-weight:700;">[${d.double_price_item}]</span>`;
-                if (calc.isSq && calc.effectiveArea > calc.areaSqFt) {
-                    trStyle += ` <span style="color:#2a7a3a;font-size:10px;">[最低${calc.effectiveArea}sqft]</span>`;
+            try {
+                const d = dict[currentLang],
+                    isQuote = (currentDocType === 'quote');
+                const iBase = parseFloat($('installBase').value) || 0,
+                    ctx = getRateContext();
+                const resultBox = $('resultBox');
+                if (!resultBox) { console.warn('resultBox not found'); return; }
+                resultBox.classList.remove('open');
+                void resultBox.offsetWidth;
+                resultBox.style.display = 'block';
+                resultBox.classList.add('open');
+                const printBtn = $('ui-btn-print');
+                if (printBtn) printBtn.style.display = 'inline-block';
+                if (currentDocType === 'parking') {
+                    const nameEl = $('lblClientName');
+                    if (nameEl) nameEl.innerText = tempParkingSurname;
+                    const phoneWrap = $('phoneWrapperLine');
+                    if (phoneWrap) phoneWrap.style.display = 'none';
+                    const addrWrap = $('addrLineWrapper');
+                    if (addrWrap) addrWrap.style.display = 'none';
+                } else {
+                    const titleVal = $('custTitle').value,
+                        nameVal = $('custName').value;
+                    const nameEl = $('lblClientName');
+                    if (nameEl) nameEl.innerText = nameVal ? (nameVal + " " + (d[titleVal] || "")) : "---";
+                    const phoneEl = $('lblClientPhone');
+                    if (phoneEl) phoneEl.innerText = $('custPhone').value || "---";
+                    const phoneWrap = $('phoneWrapperLine');
+                    if (phoneWrap) phoneWrap.style.display = 'block';
+                    const addrList = [$('addrEstate').value, $('addrBlock').value ? `Blk ${$('addrBlock').value}` : "", $(
+                            'addrFloor').value ? `${$('addrFloor').value}/F` : "", $('addrUnit').value ? `Flat ${$('addrUnit')
+                            .value}` : ""].filter(Boolean).join(' ');
+                    const addrEl = $('lblInvoiceAddress');
+                    if (addrEl) addrEl.innerText = addrList || "---";
+                    const addrWrap = $('addrLineWrapper');
+                    if (addrWrap) addrWrap.style.display = 'block';
                 }
-                let multiplier = 'x1';
-                if (calc.isOverHeight && calc.isWindowDouble) multiplier = 'x4';
-                else if (calc.isOverHeight || calc.isWindowDouble) multiplier = 'x2';
-                calcDetailRows.push({
-                    window: rN ? (d[rT] || rT) + ' ' + rN : (d[rT] || rT),
-                    roomKey: rT,
-                    roomLabel: d[rT] || rT,
-                    layerKey: l,
-                    size: calc.sizeText,
-                    type: d[l] || l,
-                    baseRate: calc.baseRate,
-                    multiplier,
-                    multiplierValue: multiplier === 'x4' ? 4 : (multiplier === 'x2' ? 2 : 1),
-                    formula: calc.formulaText,
-                    formulaDetail: calc.formulaDetail,
-                    productCost: calc.productCost,
-                    tracksCost: calc.tracksCost,
-                    isWindowDouble: calc.isWindowDouble,
-                    total: calc.lineTotal
+                const staffEl = $('lblStaffName');
+                if (staffEl) staffEl.innerText = $('staffName').value;
+                const qNo = $('quoteNo').value,
+                    mDate = $('measureDate').value,
+                    iDate = $('installDate').value;
+                const dateObj = new Date();
+                const invDateEl = $('invDate');
+                if (invDateEl) invDateEl.innerText =
+                    `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
+                const invTitleEl = $('ui-inv-type'),
+                    badge = $('invoiceNoWrapper'),
+                    quoteDisclaimer = $('quoteDisclaimer'),
+                    sigSection = document.querySelector('.signature-section');
+                const measureItem = $('measureReceiptOnlyItem');
+                const tableResponsive = document.querySelector('.table-responsive');
+                const subTotalEl = $('subTotalText'),
+                    installTotalEl = $('installTotalText'),
+                    urgentTotalEl = $('urgentTotalText');
+                const grandTotalEl = $('grandTotalText'),
+                    depPaidEl = $('depositPaidText'),
+                    depPrintEl = $('lblDepositPrintText');
+                const balDueEl = $('balanceDueText');
+                const summaryInstRow = $('summaryInstRow'),
+                    summaryUrgentRow = $('summaryUrgentRow'),
+                    summaryDiscRow = $('summaryDiscRow');
+                const summaryMeasureRow = $('summaryMeasureDeductRow'),
+                    summaryDepRow = $('summaryDepRow'),
+                    summaryBalRow = $('summaryBalRow');
+                const printDateBox = $('printDateBox'),
+                    printMeasureRow = $('printMeasureDateRow'),
+                    printMeasureDate = $('printMeasureDate');
+                const printInstallRow = $('printInstallDateRow'),
+                    printInstallDate = $('printInstallDate');
+                const printRemarksBox = $('printSpecialRemarksBox'),
+                    printRemarksText = $('printSpecialRemarksText');
+                const promoEl = $('ig-promo');
+                updateDocumentTitle();
+                if (currentDocType === 'parking') {
+                    if (invTitleEl) invTitleEl.innerText = d.inv_type_bill;
+                    if (badge) badge.innerText = qNo ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
+                    if (quoteDisclaimer) quoteDisclaimer.style.display = 'none';
+                    if (sigSection) sigSection.style.display = 'none';
+                    const pdfSelector = document.querySelector('.pdf-type-selector');
+                    if (pdfSelector) pdfSelector.style.display = 'flex';
+                    if (promoEl) promoEl.style.display = 'none';
+                    if (measureItem) { measureItem.style.display = 'block';
+                        measureItem.innerHTML = `${d.parking_item_desc}: HK$${tempParkingAmount}`; }
+                    if (tableResponsive) tableResponsive.style.display = 'none';
+                    if (subTotalEl) subTotalEl.innerText = `HK$${tempParkingAmount}`;
+                    if (installTotalEl) installTotalEl.innerText = `HK$0`;
+                    if (summaryInstRow) summaryInstRow.style.display = 'none';
+                    if (urgentTotalEl) urgentTotalEl.innerText = `HK$0`;
+                    if (summaryUrgentRow) summaryUrgentRow.style.display = 'none';
+                    if (summaryDiscRow) summaryDiscRow.style.display = 'none';
+                    if (summaryMeasureRow) summaryMeasureRow.style.display = 'none';
+                    if (grandTotalEl) grandTotalEl.innerText = `HK$${tempParkingAmount}`;
+                    if (summaryDepRow) summaryDepRow.style.display = 'none';
+                    if (summaryBalRow) summaryBalRow.style.display = 'none';
+                    const activeBtn = document.querySelector('.pdf-type-btn.active');
+                    setPdfMode(activeBtn?.id === 'btn-pdf-cust' ? 'customer' : 'company');
+                    if (printDateBox) printDateBox.style.display = 'none';
+                    if (printRemarksBox) printRemarksBox.style.display = 'none';
+                    return;
+                }
+                if (measureItem) measureItem.style.display = 'none';
+                if (tableResponsive) tableResponsive.style.display = 'block';
+                if (currentDocType === 'measure_receipt') {
+                    if (invTitleEl) invTitleEl.innerText = d.inv_type_measure;
+                    if (badge) badge.innerText = (mDate && qNo) ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
+                    if (quoteDisclaimer) quoteDisclaimer.style.display = 'none';
+                    if (sigSection) sigSection.style.display = 'none';
+                    const pdfSelector = document.querySelector('.pdf-type-selector');
+                    if (pdfSelector) pdfSelector.style.display = 'flex';
+                    if (promoEl) promoEl.style.display = 'none';
+                    const highlightEls = document.querySelectorAll('.receipt-highlight, .balance-highlight');
+                    highlightEls.forEach(el => el.style.display = 'flex');
+                    if (measureItem) { measureItem.style.display = 'block';
+                        measureItem.innerHTML = `${d.measure_item_desc}: HK$500`; }
+                    if (tableResponsive) tableResponsive.style.display = 'none';
+                    if (subTotalEl) subTotalEl.innerText = `HK$500`;
+                    if (installTotalEl) installTotalEl.innerText = `HK$0`;
+                    if (summaryInstRow) summaryInstRow.style.display = 'none';
+                    if (urgentTotalEl) urgentTotalEl.innerText = `HK$0`;
+                    if (summaryUrgentRow) summaryUrgentRow.style.display = 'none';
+                    if (summaryDiscRow) summaryDiscRow.style.display = 'none';
+                    if (summaryMeasureRow) summaryMeasureRow.style.display = 'none';
+                    if (grandTotalEl) grandTotalEl.innerText = `HK$500`;
+                    if (depPaidEl) depPaidEl.innerText = `HK$500`;
+                    if (depPrintEl) depPrintEl.innerText = `HK$500`;
+                    if (summaryBalRow) summaryBalRow.style.display = 'none';
+                    if (summaryDepRow) summaryDepRow.style.display = 'flex';
+                    const activeBtn = document.querySelector('.pdf-type-btn.active');
+                    setPdfMode(activeBtn?.id === 'btn-pdf-cust' ? 'customer' : 'company');
+                    return;
+                } else if (!isQuote) {
+                    if (invTitleEl) invTitleEl.innerText = d.inv_type_bill;
+                    if (badge) badge.innerText = qNo ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
+                    if (quoteDisclaimer) quoteDisclaimer.style.display = 'none';
+                    if (sigSection) sigSection.style.display = 'grid';
+                    const pdfSelector = document.querySelector('.pdf-type-selector');
+                    if (pdfSelector) pdfSelector.style.display = 'flex';
+                    if (promoEl) promoEl.style.display = 'none';
+                    const highlightEls = document.querySelectorAll('.receipt-highlight, .balance-highlight');
+                    highlightEls.forEach(el => el.style.display = 'flex');
+                    const activeBtn = document.querySelector('.pdf-type-btn.active');
+                    setPdfMode(activeBtn?.id === 'btn-pdf-cust' ? 'customer' : 'company');
+                } else {
+                    if (invTitleEl) invTitleEl.innerText = d.inv_type_quote;
+                    if (badge) badge.innerText = (mDate && qNo) ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
+                    if (quoteDisclaimer) { quoteDisclaimer.innerText = d.quote_warn;
+                        quoteDisclaimer.style.display = 'block'; }
+                    if (sigSection) sigSection.style.display = 'none';
+                    const pdfSelector = document.querySelector('.pdf-type-selector');
+                    if (pdfSelector) pdfSelector.style.display = 'none';
+                    if (promoEl) promoEl.style.display = 'block';
+                    const highlightEls = document.querySelectorAll('.receipt-highlight, .balance-highlight');
+                    highlightEls.forEach(el => el.style.display = 'none');
+                    document.body.classList.add('mode-customer');
+                }
+                if (mDate || iDate) {
+                    if (printDateBox) printDateBox.style.display = 'block';
+                    if (printMeasureRow) printMeasureRow.style.display = mDate ? 'block' : 'none';
+                    if (printMeasureDate) printMeasureDate.innerText = mDate ? formatDateForDisplay(mDate) : '';
+                    if (printInstallRow) printInstallRow.style.display = iDate ? 'block' : 'none';
+                    if (printInstallDate) printInstallDate.innerText = iDate ? formatDateForDisplay(iDate) : '';
+                } else {
+                    if (printDateBox) printDateBox.style.display = 'none';
+                }
+                const sRem = $('specialRemarks').value;
+                if (sRem && sRem.trim() !== '') {
+                    if (printRemarksBox) printRemarksBox.style.display = 'block';
+                    if (printRemarksText) printRemarksText.innerText = sRem;
+                } else {
+                    if (printRemarksBox) printRemarksBox.style.display = 'none';
+                }
+                if (currentDocType === 'measure_receipt') return;
+                subTotal = 0;
+                installFee = iBase;
+                finalGrandTotal = 0;
+                calcDetailRows = [];
+                const tbody = $('reportTableBody');
+                if (tbody) tbody.innerHTML = '';
+                document.querySelectorAll('.window-item').forEach(item => {
+                    const rT = item.querySelector('.room-type').value,
+                        rN = item.querySelector('.room-num').value;
+                    const l = item.querySelector('.layer-type').value,
+                        rem = item.querySelector('.window-rem').value;
+                    const op = item.querySelector('.open-type').value,
+                        pType = item.querySelector('.motor-power').value;
+                    const mQty = parseInt(item.querySelector('.manual-qty').value) || 0;
+                    const eQty = parseInt(item.querySelector('.motor-qty').value) || 0;
+                    const calc = computeWindowLine(item, d, ctx);
+                    const lineTotal = calc.lineTotal;
+                    subTotal += lineTotal;
+                    let trStyle = d[l] || l;
+                    if (calc.isOverHeight) trStyle +=
+                        ` <span style="color:#b5651d;font-size:10px;">[${d.double_charge}]</span>`;
+                    if (calc.isWindowDouble) trStyle +=
+                        ` <span style="color:#8b5a2b;font-size:10px;font-weight:700;">[${d.double_price_item}]</span>`;
+                    if (calc.isSq && calc.effectiveArea > calc.areaSqFt) {
+                        trStyle += ` <span style="color:#2a7a3a;font-size:10px;">[最低${calc.effectiveArea}sqft]</span>`;
+                    }
+                    let multiplier = 'x1';
+                    if (calc.isOverHeight && calc.isWindowDouble) multiplier = 'x4';
+                    else if (calc.isOverHeight || calc.isWindowDouble) multiplier = 'x2';
+                    calcDetailRows.push({
+                        window: rN ? (d[rT] || rT) + ' ' + rN : (d[rT] || rT),
+                        roomKey: rT,
+                        roomLabel: d[rT] || rT,
+                        layerKey: l,
+                        size: calc.sizeText,
+                        type: d[l] || l,
+                        baseRate: calc.baseRate,
+                        multiplier,
+                        multiplierValue: multiplier === 'x4' ? 4 : (multiplier === 'x2' ? 2 : 1),
+                        formula: calc.formulaText,
+                        formulaDetail: calc.formulaDetail,
+                        productCost: calc.productCost,
+                        tracksCost: calc.tracksCost,
+                        isWindowDouble: calc.isWindowDouble,
+                        total: calc.lineTotal
+                    });
+                    let trackDesc = [];
+                    if (!calc.isSq) { if (mQty) trackDesc.push(`${d.lbl_manual}x${mQty}`); if (eQty) trackDesc.push(
+                            `${d.lbl_motor}x${eQty}(${d[pType]})`); }
+                    if (tbody) {
+                        tbody.innerHTML += `<tr><td><strong>${rN?(d[rT]||rT)+' '+rN:(d[rT]||rT)}</strong></td><td>${calc.sizeText}</td><td>${calc.ftText}</td><td>${trStyle}</td><td class="simple-hide">${(!calc.isSq&&l!=='track_only')?d[op]:'-'}</td><td class="simple-hide">${trackDesc.length>0?trackDesc.join(', '):'-'}</td><td class="simple-hide">${rem||'-'}</td><td>HK$${lineTotal}</td></tr>`;
+                    }
                 });
-                let trackDesc = [];
-                if (!calc.isSq) { if (mQty) trackDesc.push(`${d.lbl_manual}x${mQty}`); if (eQty) trackDesc.push(
-                        `${d.lbl_motor}x${eQty}(${d[pType]})`); }
-                tbody.innerHTML += `<tr><td><strong>${rN?(d[rT]||rT)+' '+rN:(d[rT]||rT)}</strong></td><td>${calc.sizeText}</td><td>${calc.ftText}</td><td>${trStyle}</td><td class="simple-hide">${(!calc.isSq&&l!=='track_only')?d[op]:'-'}</td><td class="simple-hide">${trackDesc.length>0?trackDesc.join(', '):'-'}</td><td class="simple-hide">${rem||'-'}</td><td>HK$${lineTotal}</td></tr>`;
-            });
-            $('subTotalText').innerText = `HK$${subTotal}`;
-            $('installTotalText').innerText = `HK$${installFee}`;
-            urgentTotal = parseFloat($('urgentCharge').value) || 0;
-            $('urgentTotalText').innerText = `HK$${urgentTotal}`;
-            $('summaryInstRow').style.display = 'flex';
-            $('summaryUrgentRow').style.display = urgentTotal > 0 ? 'flex' : 'none';
-            $('summaryDiscRow').style.display = 'flex';
-            applyDiscount();
+                if (subTotalEl) subTotalEl.innerText = `HK$${subTotal}`;
+                if (installTotalEl) installTotalEl.innerText = `HK$${installFee}`;
+                urgentTotal = parseFloat($('urgentCharge').value) || 0;
+                if (urgentTotalEl) urgentTotalEl.innerText = `HK$${urgentTotal}`;
+                if (summaryInstRow) summaryInstRow.style.display = 'flex';
+                if (summaryUrgentRow) summaryUrgentRow.style.display = urgentTotal > 0 ? 'flex' : 'none';
+                if (summaryDiscRow) summaryDiscRow.style.display = 'flex';
+                applyDiscount();
+            } catch (e) {
+                console.error('calculateAll error:', e);
+                pushHint('計算出現錯誤，請檢查資料');
+            }
         }
 
         function applyDiscount() {
             const discRatio = parseFloat($('discountSelect').value);
             let finalSub = subTotal * discRatio;
             const discAmt = subTotal - finalSub;
-            if (discAmt > 0.01) { $('lblDiscountText').innerText = `-HK$${Math.round(discAmt)}`;
-                $('lblDiscountText').style.display = 'inline'; } else { $('lblDiscountText').innerText = '-';
-                $('lblDiscountText').style.display = 'inline'; }
+            const discLabel = $('lblDiscountText');
+            if (discLabel) {
+                if (discAmt > 0.01) { discLabel.innerText = `-HK$${Math.round(discAmt)}`;
+                    discLabel.style.display = 'inline'; } else { discLabel.innerText = '-';
+                    discLabel.style.display = 'inline'; }
+            }
             const deductMeasure = $('chkDeductMeasure').checked ? 500 : 0;
-            $('summaryMeasureDeductRow').style.display = deductMeasure > 0 ? 'flex' : 'none';
-            if (deductMeasure > 0) { document.querySelector('#summaryMeasureDeductRow span:last-child').innerText =
-                    `-HK$${deductMeasure}`; }
-            // 最終總價 = 折扣後窗位費 + 安裝費 + 附加費 - 度尺費扣除
+            const measureRow = $('summaryMeasureDeductRow');
+            if (measureRow) {
+                measureRow.style.display = deductMeasure > 0 ? 'flex' : 'none';
+                if (deductMeasure > 0) {
+                    const span = measureRow.querySelector('span:last-child');
+                    if (span) span.innerText = `-HK$${deductMeasure}`;
+                }
+            }
             finalGrandTotal = Math.round(finalSub + installFee + urgentTotal - deductMeasure);
-            $('grandTotalText').innerText = `HK$${finalGrandTotal}`;
+            const grandEl = $('grandTotalText');
+            if (grandEl) grandEl.innerText = `HK$${finalGrandTotal}`;
             updateDepositDisplay();
         }
 
         function updateDepositDisplay() {
             const depMode = $('depositSelect').value;
             let depositPaid = 0;
-            // 根據訂金模式計算訂金（基於最終總價 finalGrandTotal）
             if (depMode === '0.5') depositPaid = Math.round(finalGrandTotal * 0.5);
             else if (depMode === '0.3') depositPaid = Math.round(finalGrandTotal * 0.3);
             else if (depMode === 'measure_only') depositPaid = 500;
             else if (depMode === 'custom') depositPaid = parseFloat($('customDepositVal').value) || 0;
-            // 防止訂金超過總價（measure_only 除外，因為度尺訂金單總價就是 500）
             if (depMode !== 'measure_only' && depositPaid > finalGrandTotal) depositPaid = finalGrandTotal;
-            // 更新訂金顯示
-            $('depositPaidText').innerText = `HK$${Math.round(depositPaid)}`;
-            $('lblDepositPrintText').innerText = `HK$${Math.round(depositPaid)}`;
-            // 計算尾款
+            const depPaid = $('depositPaidText');
+            if (depPaid) depPaid.innerText = `HK$${Math.round(depositPaid)}`;
+            const depPrint = $('lblDepositPrintText');
+            if (depPrint) depPrint.innerText = `HK$${Math.round(depositPaid)}`;
             const balance = finalGrandTotal - depositPaid;
-            // 更新尾款顯示（balanceDueText 元素已存在於 HTML 中）
             const balEl = $('balanceDueText');
             if (balEl) balEl.innerText = `HK$${Math.round(balance)}`;
-            // 控制尾款行顯示：餘額 <= 0 時隱藏，否則顯示
             const balRow = $('summaryBalRow');
             if (balRow) {
                 if (balance <= 0) {
@@ -4468,12 +4710,9 @@
                     balRow.style.display = 'flex';
                 }
             }
-            // 控制訂金行顯示：如果是正式單據且有訂金（或度尺訂金單）則顯示
             const depRow = $('summaryDepRow');
             if (depRow) {
-                // 只有正式單據或度尺訂金單才顯示訂金行
                 if (currentDocType === 'invoice' || currentDocType === 'measure_receipt') {
-                    // 如果訂金為 0 且不是度尺訂金單，隱藏
                     if (depositPaid <= 0 && currentDocType === 'invoice') {
                         depRow.style.display = 'none';
                     } else {
@@ -4483,12 +4722,10 @@
                     depRow.style.display = 'none';
                 }
             }
-            // 報價單或泊車單，尾款行強制隱藏（由 calculateAll 控制）
             if (currentDocType === 'quote' || currentDocType === 'parking') {
                 if (balRow) balRow.style.display = 'none';
                 if (depRow) depRow.style.display = 'none';
             }
-            // 自動儲存歷史版本（僅在正式單據或報價單且有單號時）
             if ($('quoteNo').value && (currentDocType === 'invoice' || currentDocType === 'quote')) {
                 clearTimeout(window.quoteHistorySaveTimer);
                 window.quoteHistorySaveTimer = setTimeout(() => saveCurrentQuoteRecord(), 600);
@@ -4497,44 +4734,61 @@
 
         function handleDepositChange() {
             const val = $('depositSelect').value;
-            $('customDepositWrapper').style.display = val === 'custom' ? 'block' : 'none';
+            const wrap = $('customDepositWrapper');
+            if (wrap) wrap.style.display = val === 'custom' ? 'block' : 'none';
             if ($('resultBox').style.display === 'block') calculateAll();
             autoSaveDraft();
         }
 
         // ===== 生成文件 =====
         function generateDoc(type) {
-            currentDocType = type;
-            saveCustomerProfile();
-            if (type === 'parking') {
-                const staff = ['Henry', 'Emily', 'Helen', 'Anson', 'Edison'];
-                $('staffName').value = staff[Math.floor(Math.random() * staff.length)];
-                $('quoteNo').value = Math.floor(Math.random() * 90000) + 10000;
-                tempParkingAmount = Math.floor(Math.random() * (1000 - 800 + 1)) + 800;
-                const surnames = ['陳', '林', '黃', '張', '李', '何', '吳', '王', '劉', '楊', '鄭', '郭', '梁', '周', '曾', '蔡', '葉',
-                    '許'
-                ];
-                tempParkingSurname = surnames[Math.floor(Math.random() * surnames.length)];
+            try {
+                currentDocType = type;
+                saveCustomerProfile();
+                if (type === 'parking') {
+                    const staff = ['Henry', 'Emily', 'Helen', 'Anson', 'Edison'];
+                    $('staffName').value = staff[Math.floor(Math.random() * staff.length)];
+                    $('quoteNo').value = Math.floor(Math.random() * 90000) + 10000;
+                    tempParkingAmount = Math.floor(Math.random() * (1000 - 800 + 1)) + 800;
+                    const surnames = ['陳', '林', '黃', '張', '李', '何', '吳', '王', '劉', '楊', '鄭', '郭', '梁', '周', '曾', '蔡', '葉',
+                        '許'
+                    ];
+                    tempParkingSurname = surnames[Math.floor(Math.random() * surnames.length)];
+                }
+                calculateAll();
+                if ($('quoteNo').value) saveCurrentQuoteRecord();
+                setTimeout(() => {
+                    const box = $('resultBox');
+                    if (box) box.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            } catch (e) {
+                console.error('generateDoc error:', e);
+                pushHint('生成單據時發生錯誤，請重試');
             }
-            calculateAll();
-            if ($('quoteNo').value) saveCurrentQuoteRecord();
-            setTimeout(() => { $('resultBox').scrollIntoView({ behavior: 'smooth' }); }, 100);
         }
 
         function resetForm() {
             if (!confirm(dict[currentLang].confirm_reset)) return;
             ['custName', 'custPhone', 'quoteNo', 'addrEstate', 'addrBlock', 'addrFloor', 'addrUnit', 'measureDate',
                 'installDate', 'urgentCharge', 'specialRemarks'
-            ].forEach(id => $(id).value = '');
-            $('chkDeductMeasure').checked = false;
-            $('depositSelect').value = '0';
-            $('customDepositVal').value = 0;
-            $('customDepositWrapper').style.display = 'none';
-            $('discountSelect').value = '1.0';
-            $('windowList').innerHTML = '';
+            ].forEach(id => { const el = $(id); if (el) el.value = ''; });
+            const chk = $('chkDeductMeasure');
+            if (chk) chk.checked = false;
+            const dep = $('depositSelect');
+            if (dep) dep.value = '0';
+            const custDep = $('customDepositVal');
+            if (custDep) custDep.value = 0;
+            const wrap = $('customDepositWrapper');
+            if (wrap) wrap.style.display = 'none';
+            const disc = $('discountSelect');
+            if (disc) disc.value = '1.0';
+            const list = $('windowList');
+            if (list) list.innerHTML = '';
             addWindow();
-            $('resultBox').style.display = 'none';
-            $('ui-btn-print').style.display = 'none';
+            const box = $('resultBox');
+            if (box) box.style.display = 'none';
+            const printBtn = $('ui-btn-print');
+            if (printBtn) printBtn.style.display = 'none';
             updateDocumentTitle();
             updateWindowCount();
             autoSaveDraft();
@@ -4558,8 +4812,8 @@
             const phone = $('custPhone').value || '-';
             const addr = [$('addrEstate').value, $('addrBlock').value, $('addrFloor').value, $('addrUnit').value]
                 .filter(Boolean).join(' ') || '-';
-            const total = $('grandTotalText').innerText || 'HK$0',
-                deposit = $('depositPaidText').innerText || 'HK$0';
+            const total = $('grandTotalText')?.innerText || 'HK$0',
+                deposit = $('depositPaidText')?.innerText || 'HK$0';
             const balance = $('balanceDueText')?.innerText || 'HK$0',
                 installDate = $('installDate').value || '-';
             if (template === 'engineering') {
@@ -4643,7 +4897,6 @@
             pushHint(dict[currentLang].calc_csv_done || 'CSV 已匯出');
         }
 
-        // ===== 快速列印 =====
         function runQuickPrint() { if ($('resultBox').style.display !== 'block') generateDoc('quote');
             window.print(); }
 
@@ -4699,26 +4952,29 @@
             const full = $('btn-mode-full'),
                 simple = $('btn-mode-simple');
             if (mode === 'simple') { document.body.classList.add('mode-simple');
-                simple.classList.add('active');
-                full.classList.remove('active'); } else { document.body.classList.remove('mode-simple');
-                full.classList.add('active');
-                simple.classList.remove('active'); }
+                if (simple) simple.classList.add('active');
+                if (full) full.classList.remove('active'); } else { document.body.classList.remove('mode-simple');
+                if (full) full.classList.add('active');
+                if (simple) simple.classList.remove('active'); }
             if ($('resultBox').style.display === 'block') calculateAll();
         }
 
         function setPdfMode(mode) {
-            $('btn-pdf-cust').classList.remove('active');
-            $('btn-pdf-comp').classList.remove('active');
-            if (mode === 'customer') { document.body.classList.add('mode-customer');
-                $('btn-pdf-cust').classList.add('active'); } else { document.body.classList.remove('mode-customer');
-                $('btn-pdf-comp').classList.add('active'); }
+            const cust = $('btn-pdf-cust'),
+                comp = $('btn-pdf-comp');
+            if (cust) cust.classList.remove('active');
+            if (comp) comp.classList.remove('active');
+            if (mode === 'customer') { document.body.classList.add('mode-customer'); if (cust) cust.classList.add(
+                    'active'); } else { document.body.classList.remove('mode-customer'); if (comp) comp.classList.add(
+                    'active'); }
         }
 
         // ===== 摺疊控制 =====
         function toggleSection(panelId, btnId) {
             const panel = $(panelId),
-                skeleton = $(panelId + 'Skeleton'),
-                isHidden = panel.style.display === 'none';
+                skeleton = $(panelId + 'Skeleton');
+            if (!panel) return;
+            const isHidden = panel.style.display === 'none';
             if (isHidden) {
                 if (skeleton) skeleton.style.display = 'block';
                 setTimeout(() => {
@@ -4750,8 +5006,9 @@
 
         function toggleSettingsCollapse() {
             const wrap = $('settingsCollapseWrap'),
-                btn = $('btnDataManage'),
-                label = btn.querySelector('span:first-child');
+                btn = $('btnDataManage');
+            if (!wrap || !btn) return;
+            const label = btn.querySelector('span:first-child');
             if (wrap.classList.contains('collapsed')) { wrap.classList.remove('collapsed');
                 wrap.classList.add('open'); if (label) label.textContent = dict[currentLang]
                     .ui_data_manage_collapse || '收合 ▲'; } else { wrap.classList.add('collapsed');
@@ -4765,6 +5022,7 @@
         function toggleConverter() {
             const panel = $('converterPanel');
             const btn = $('btnToggleConverter');
+            if (!panel || !btn) return;
             panel.classList.toggle('open');
             if (panel.classList.contains('open')) { btn.classList.add('active');
                 btn.textContent = '📐 換算器 ✕'; } else { btn.classList.remove('active');
@@ -4774,8 +5032,8 @@
         }
 
         function convertLength() {
-            const input = parseFloat($('convLengthInput').value) || 0;
-            const unit = $('convLengthUnit').value;
+            const input = parseFloat($('convLengthInput')?.value) || 0;
+            const unit = $('convLengthUnit')?.value || 'cm';
             const toMM = { mm: 1, cm: 10, m: 1000, inch: 25.4, ft: 304.8, yd: 914.4 };
             const mm = input * (toMM[unit] || 1);
             const map = {
@@ -4787,10 +5045,13 @@
                 yd: v => v / 914.4
             };
             const units = ['mm', 'cm', 'm', 'inch', 'ft', 'yd'];
-            units.forEach((u, i) => {
+            units.forEach((u) => {
                 const el = document.getElementById(`cl-${u}`);
-                if (el) el.textContent = u === 'mm' ? Math.round(map[u](mm) * 100) / 100 : (map[u](mm) < 0.01 ?
-                    '<0.01' : Math.round(map[u](mm) * 100) / 100);
+                if (el) {
+                    const val = map[u](mm);
+                    el.textContent = u === 'mm' ? Math.round(val * 100) / 100 : (val < 0.01 ? '<0.01' : Math
+                        .round(val * 100) / 100);
+                }
             });
         }
 
@@ -4844,9 +5105,9 @@
         }
 
         function convertArea() {
-            const len = parseFloat($('convAreaLen').value) || 0;
-            const wid = parseFloat($('convAreaWid').value) || 0;
-            const unit = $('convAreaUnit').value;
+            const len = parseFloat($('convAreaLen')?.value) || 0;
+            const wid = parseFloat($('convAreaWid')?.value) || 0;
+            const unit = $('convAreaUnit')?.value || 'cm';
             const toMM = { mm: 1, cm: 10, m: 1000, inch: 25.4, ft: 304.8, yd: 914.4 };
             const mmLen = len * toMM[unit],
                 mmWid = wid * toMM[unit];
@@ -4863,7 +5124,7 @@
             const resultEl = $('convAreaResult');
             if (resultEl) resultEl.textContent =
                 `📐 面積 = ${len} × ${wid} ${unit} = ${Math.round(areaMM2)} mm² = ${Math.round(map.cm2(areaMM2)*100)/100} cm² = ${Math.round(map.m2(areaMM2)*10000)/10000} m²`;
-            units.forEach((u, i) => {
+            units.forEach((u) => {
                 const el = document.getElementById(`ca-${u}`);
                 if (el) {
                     const val = map[u](areaMM2);
@@ -4933,79 +5194,80 @@
             setTxt('ui-lbl-custdep', d.ui_lbl_custdep);
             setTxt('ui-lbl-urgent', d.ui_lbl_urgent);
             setTxt('ui-print-rem-title', d.ui_print_rem_title);
-            setTxt('ui-quick-quote', d.quick_quote);
-            setTxt('ui-quick-invoice', d.quick_invoice);
-            setTxt('ui-quick-top', d.quick_top);
             setTxt('ui-panel-tools', d.panel_tools);
             setTxt('btnToggleTools', d.tools_toggle);
             setTxt('ui-lbl-wa-template', d.ui_lbl_wa_template);
             setTxt('ui-btn-export-csv', d.calc_export_csv);
-            setTxt('btnTemplateToggle', d.template_toggle);
-            setTxt('btnHistoryToggle', d.history_toggle);
-            setTxt('btnSyncToggle', d.sync_toggle);
             const dmBtn = $('ui-data-manage-btn');
             if (dmBtn) dmBtn.textContent = $('settingsCollapseWrap').classList.contains('collapsed') ? d
                 .ui_data_manage_expand : d.ui_data_manage_collapse;
-            $('custName').placeholder = d.ph_cust_name;
-            $('custPhone').placeholder = d.ph_phone;
-            $('addrEstate').placeholder = d.ph_estate;
-            $('addrBlock').placeholder = d.ph_block;
-            $('addrFloor').placeholder = d.ph_floor;
-            $('addrUnit').placeholder = d.ph_unit;
-            const depSel = $('depositSelect'),
-                depVal = depSel.value;
-            depSel.innerHTML =
-                `<option value="0">${d.dep_none}</option><option value="measure_only">${d.dep_measure_only}</option><option value="0.5">${d.dep_50}</option><option value="0.3">${d.dep_30}</option><option value="custom">${d.dep_custom}</option>`;
-            depSel.value = depVal;
-            $('ui-main-title').innerText = d.title;
-            $('ui-sum-sub').innerText = d.sum_sub + ":";
-            $('ui-sum-inst').innerText = d.sum_inst + ":";
-            $('ui-sum-urgent').innerText = d.sum_urgent + ":";
-            $('ui-sum-disc').innerText = d.sum_disc + ":";
-            $('ui-sum-grand').innerText = d.sum_grand + ":";
-            $('ui-sum-measure-deduct').innerText = d.sum_meas_deduct + ":";
-            $('ui-sum-dep-paid').innerText = d.sum_dep_paid + ":";
-            $('ui-sum-balance').innerText = d.sum_balance + ":";
-            $('ui-ft-1').innerText = d.ft1;
-            $('ui-ft-2').innerText = d.ft2;
-            $('ui-ft-val').innerText = d.ft_val;
-            $('ui-ft-dep').innerText = d.ft_dep;
-            $('ui-pdf-sel-lbl').innerText = d.pdf_sel;
-            $('btn-pdf-cust').innerText = d.pdf_cust;
-            $('btn-pdf-comp').innerText = d.pdf_comp;
-            $('ui-inv-date').innerText = d.inv_date;
-            $('lbl_print_mdate').innerText = d.lbl_m_date;
-            $('lbl_print_idate').innerText = d.lbl_i_date;
-            const addrLabel = $('ui-lbl-inv-addr');
-            if (addrLabel) addrLabel.innerText = d.inv_addr + ':';
-            $('ui-sig-client').innerText = d.sig_client;
-            $('ui-sig-comp').innerText = d.sig_comp;
-            $('th-size').innerText = d.th_size;
-            $('th-ft').innerText = d.th_ft;
-            $('th-type').innerText = d.th_type;
-            $('th-open').innerText = d.th_open;
-            $('th-motor').innerText = d.th_motor;
-            $('th-rem').innerText = d.th_rem;
-            $('th-sub').innerText = d.th_sub;
-            $('ui-btn-quote').innerText = d.btn_quote;
-            $('ui-btn-invoice').innerText = d.btn_invoice;
-            $('ui-btn-measure-receipt').innerText = d.btn_measure_receipt;
-            $('ui-btn-print').innerText = d.btn_print;
-            $('ui-btn-reset').innerText = d.btn_reset;
-            $('ui-btn-wa-copy').innerText = d.btn_wa_copy;
-            $('ui-btn-install-copy').innerText = d.btn_install_copy;
-            $('ui-ft-tech').innerText = d.tech;
-            const wa = $('waTemplate');
-            if (wa) { const v = wa.value;
-                wa.innerHTML =
+            const nameInput = $('custName');
+            if (nameInput) nameInput.placeholder = d.ph_cust_name;
+            const phoneInput = $('custPhone');
+            if (phoneInput) phoneInput.placeholder = d.ph_phone;
+            const estateInput = $('addrEstate');
+            if (estateInput) estateInput.placeholder = d.ph_estate;
+            const blockInput = $('addrBlock');
+            if (blockInput) blockInput.placeholder = d.ph_block;
+            const floorInput = $('addrFloor');
+            if (floorInput) floorInput.placeholder = d.ph_floor;
+            const unitInput = $('addrUnit');
+            if (unitInput) unitInput.placeholder = d.ph_unit;
+            const depSel = $('depositSelect');
+            if (depSel) {
+                const depVal = depSel.value;
+                depSel.innerHTML =
+                    `<option value="0">${d.dep_none}</option><option value="measure_only">${d.dep_measure_only}</option><option value="0.5">${d.dep_50}</option><option value="0.3">${d.dep_30}</option><option value="custom">${d.dep_custom}</option>`;
+                depSel.value = depVal;
+            }
+            const titleEl = $('ui-main-title');
+            if (titleEl) titleEl.innerText = d.title;
+            setTxt('ui-sum-sub', d.sum_sub + ":");
+            setTxt('ui-sum-inst', d.sum_inst + ":");
+            setTxt('ui-sum-urgent', d.sum_urgent + ":");
+            setTxt('ui-sum-disc', d.sum_disc + ":");
+            setTxt('ui-sum-grand', d.sum_grand + ":");
+            setTxt('ui-sum-measure-deduct', d.sum_meas_deduct + ":");
+            setTxt('ui-sum-dep-paid', d.sum_dep_paid + ":");
+            setTxt('ui-sum-balance', d.sum_balance + ":");
+            setTxt('ui-ft-1', d.ft1);
+            setTxt('ui-ft-2', d.ft2);
+            setTxt('ui-ft-val', d.ft_val);
+            setTxt('ui-ft-dep', d.ft_dep);
+            setTxt('ui-pdf-sel-lbl', d.pdf_sel);
+            setTxt('btn-pdf-cust', d.pdf_cust);
+            setTxt('btn-pdf-comp', d.pdf_comp);
+            setTxt('ui-inv-date', d.inv_date);
+            setTxt('lbl_print_mdate', d.lbl_m_date);
+            setTxt('lbl_print_idate', d.lbl_i_date);
+            setTxt('ui-sig-client', d.sig_client);
+            setTxt('ui-sig-comp', d.sig_comp);
+            setTxt('th-size', d.th_size);
+            setTxt('th-ft', d.th_ft);
+            setTxt('th-type', d.th_type);
+            setTxt('th-open', d.th_open);
+            setTxt('th-motor', d.th_motor);
+            setTxt('th-rem', d.th_rem);
+            setTxt('th-sub', d.th_sub);
+            setTxt('ui-btn-quote', d.btn_quote);
+            setTxt('ui-btn-invoice', d.btn_invoice);
+            setTxt('ui-btn-measure-receipt', d.btn_measure_receipt);
+            setTxt('ui-btn-print', d.btn_print);
+            setTxt('ui-btn-reset', d.btn_reset);
+            setTxt('ui-btn-wa-copy', d.btn_wa_copy);
+            setTxt('ui-btn-install-copy', d.btn_install_copy);
+            setTxt('ui-ft-tech', d.tech);
+            const waSel = $('waTemplate');
+            if (waSel) { const v = waSel.value;
+                waSel.innerHTML =
                     `<option value="compact">${d.wa_compact}</option><option value="detailed">${d.wa_detailed}</option><option value="engineering">${d.wa_engineering}</option>`;
-                wa.value = v; }
-            $('conv-length-title').innerText = d.conv_length_title || '📏 長度換算';
-            $('conv-area-title').innerText = d.conv_area_title || '📐 面積換算 (長 × 寬)';
-            $('conv-lbl-value').innerText = d.conv_lbl_value || '數值';
-            $('conv-lbl-len').innerText = d.conv_lbl_len || '長';
-            $('conv-lbl-wid').innerText = d.conv_lbl_wid || '寬';
-            $('conv-lbl-unit').innerText = d.conv_lbl_unit || '單位';
+                waSel.value = v; }
+            setTxt('conv-length-title', d.conv_length_title || '📏 長度換算');
+            setTxt('conv-area-title', d.conv_area_title || '📐 面積換算 (長 × 寬)');
+            setTxt('conv-lbl-value', d.conv_lbl_value || '數值');
+            setTxt('conv-lbl-len', d.conv_lbl_len || '長');
+            setTxt('conv-lbl-wid', d.conv_lbl_wid || '寬');
+            setTxt('conv-lbl-unit', d.conv_lbl_unit || '單位');
 
             document.querySelectorAll('.window-item').forEach(winItem => {
                 const d2 = dict[currentLang];
@@ -5081,35 +5343,42 @@
                 if (rmBtn) rmBtn.innerText = d2.delete;
             });
             const ctOpts = { mr: d.mr, ms: d.ms, mrs: d.mrs, dr: d.dr };
-            const cSel = $('custTitle'),
-                cVal = cSel.value;
-            cSel.innerHTML = Object.keys(ctOpts).map(k => `<option value="${k}">${ctOpts[k]}</option>`).join('');
-            cSel.value = cVal;
-            const adaptBtn = $('ui-quick-adapt');
-            if (adaptBtn) adaptBtn.innerText = d.quick_print_btn || '列印/PDF';
+            const cSel = $('custTitle');
+            if (cSel) { const cVal = cSel.value;
+                cSel.innerHTML = Object.keys(ctOpts).map(k => `<option value="${k}">${ctOpts[k]}</option>`).join('');
+                cSel.value = cVal; }
             renderQuoteHistorySelect();
             refreshAllShellStatus();
             if ($('resultBox').style.display === 'block') calculateAll();
         }
 
         function applyRemarkTemplate() {
-            const val = $('remarkTemplate').value;
-            if (val) { const ta = $('specialRemarks');
-                ta.value = ta.value ? ta.value + '\n' + val : val;
-                $('remarkTemplate').value = '';
-                if ($('resultBox').style.display === 'block') calculateAll();
+            const val = $('remarkTemplate')?.value;
+            if (val) { const ta = $('specialRemarks'); if (ta) { ta.value = ta.value ? ta.value + '\n' + val : val; } const
+                    sel = $('remarkTemplate'); if (sel) sel.value = ''; if ($('resultBox').style.display === 'block')
+                    calculateAll();
                 autoSaveDraft(); }
         }
 
         // ===== 初始化 =====
         window.addEventListener('load', function() {
             document.querySelectorAll('.mini-panel').forEach(p => p.classList.remove('open'));
-            $('converterPanel').classList.remove('open');
+            const convPanel = $('converterPanel');
+            if (convPanel) convPanel.classList.remove('open');
             convertArea();
             updateWindowCount();
-            const addrLabel = $('ui-lbl-inv-addr');
-            if (addrLabel) addrLabel.innerText = 'Address:';
+            // 修復手機版：確保所有按鈕可點擊
+            document.querySelectorAll('button, .btn-action, .add-btn, .remove-btn, .toggle-section-btn, .mode-btn, .lang-btn, .btn-parking, .btn-tool, .platform-quick-btn, .history-btn, .template-action-btn, .sync-btn, .pdf-type-btn').forEach(el => {
+                if (!el.hasAttribute('type')) el.setAttribute('type', 'button');
+                if (el.tagName === 'BUTTON' && el.type === 'submit') el.type = 'button';
+                el.style.touchAction = 'manipulation';
+            });
+        });
+
+        // 全局錯誤捕獲
+        window.addEventListener('error', function(e) {
+            console.warn('Runtime error:', e.message);
         });
     </script>
-
-</body></html>
+</body>
+</html>
