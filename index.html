@@ -2161,12 +2161,14 @@
 
         /* ===== 修復：手機版路軌選擇強制可見 ===== */
         @media (max-width: 767px) {
+            /* 確保 .win-sub-box 在手機版永遠可見（除非用戶主動進入精簡模式） */
             body:not(.mode-simple) .win-sub-box {
                 display: flex !important;
             }
             body:not(.mode-simple) .win-sub-box .track-item {
                 display: block !important;
             }
+            /* 確保 custom-price-field 在手機版可見 */
             body:not(.mode-simple) .custom-price-field {
                 display: flex !important;
                 flex-wrap: wrap;
@@ -2176,15 +2178,19 @@
                 flex: 1;
                 min-width: 80px;
             }
+            /* 確保 open-type-wrapper 在手機版可見 */
             body:not(.mode-simple) .open-type-wrapper {
                 display: block !important;
             }
+            /* 確保 motor-power-wrapper 在手機版可見 */
             body:not(.mode-simple) .motor-power-wrapper {
                 display: block !important;
             }
+            /* 確保 window-photo-box 在手機版可見 */
             body:not(.mode-simple) .window-photo-box {
                 display: block !important;
             }
+            /* 修復按鈕點擊區域 */
             .btn-action,
             .add-btn,
             .remove-btn,
@@ -2205,6 +2211,7 @@
                 position: relative;
                 z-index: 1;
             }
+            /* 確保所有表單控件可點擊 */
             input,
             select,
             textarea,
@@ -2212,9 +2219,11 @@
             .check-container {
                 touch-action: manipulation;
             }
+            /* 修復 modal 滾動 */
             .modal-box {
                 -webkit-overflow-scrolling: touch;
             }
+            /* 確保 table 滾動順暢 */
             .table-responsive {
                 -webkit-overflow-scrolling: touch;
             }
@@ -2657,7 +2666,7 @@
         </div>
 
         <!-- ===== 結果區 ===== -->
-        <div class="result-box" id="resultBox">
+        <div class="result-box open" id="resultBox" style="display: block;">
             <div class="pdf-type-selector" style="display: none;">
                 <span style="font-size:13px;color:#513c2f;font-weight:700;width:100%;" id="ui-pdf-sel-lbl">顯示模式：</span>
                 <button class="pdf-type-btn active" id="btn-pdf-cust" onclick="setPdfMode('customer')">客戶版 (隱藏地址)</button>
@@ -4415,275 +4424,210 @@
             autoSaveDraft();
         }
 
-        // ===== 安全 DOM 輔助 =====
-        function safeSetText(el, text) { if (el) el.innerText = text; }
-
-        function safeSetDisplay(el, display) { if (el) el.style.display = display; }
-
         // ===== 主要計算 =====
         function calculateAll() {
-            try {
-                const d = dict[currentLang],
-                    isQuote = (currentDocType === 'quote');
-                const iBase = parseFloat($('installBase').value) || 0,
-                    ctx = getRateContext();
-                const resultBox = $('resultBox');
-                if (!resultBox) { console.warn('resultBox not found'); return; }
-                resultBox.classList.remove('open');
-                void resultBox.offsetWidth;
-                resultBox.style.display = 'block';
-                resultBox.classList.add('open');
-                const printBtn = $('ui-btn-print');
-                if (printBtn) printBtn.style.display = 'inline-block';
-                if (currentDocType === 'parking') {
-                    const nameEl = $('lblClientName');
-                    if (nameEl) nameEl.innerText = tempParkingSurname;
-                    const phoneWrap = $('phoneWrapperLine');
-                    if (phoneWrap) phoneWrap.style.display = 'none';
-                    const addrWrap = $('addrLineWrapper');
-                    if (addrWrap) addrWrap.style.display = 'none';
-                } else {
-                    const titleVal = $('custTitle').value,
-                        nameVal = $('custName').value;
-                    const nameEl = $('lblClientName');
-                    if (nameEl) nameEl.innerText = nameVal ? (nameVal + " " + (d[titleVal] || "")) : "---";
-                    const phoneEl = $('lblClientPhone');
-                    if (phoneEl) phoneEl.innerText = $('custPhone').value || "---";
-                    const phoneWrap = $('phoneWrapperLine');
-                    if (phoneWrap) phoneWrap.style.display = 'block';
-                    const addrList = [$('addrEstate').value, $('addrBlock').value ? `Blk ${$('addrBlock').value}` : "", $(
-                            'addrFloor').value ? `${$('addrFloor').value}/F` : "", $('addrUnit').value ? `Flat ${$('addrUnit')
-                            .value}` : ""].filter(Boolean).join(' ');
-                    const addrEl = $('lblInvoiceAddress');
-                    if (addrEl) addrEl.innerText = addrList || "---";
-                    const addrWrap = $('addrLineWrapper');
-                    if (addrWrap) addrWrap.style.display = 'block';
-                }
-                const staffEl = $('lblStaffName');
-                if (staffEl) staffEl.innerText = $('staffName').value;
-                const qNo = $('quoteNo').value,
-                    mDate = $('measureDate').value,
-                    iDate = $('installDate').value;
-                const dateObj = new Date();
-                const invDateEl = $('invDate');
-                if (invDateEl) invDateEl.innerText =
-                    `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
-                const invTitleEl = $('ui-inv-type'),
-                    badge = $('invoiceNoWrapper'),
-                    quoteDisclaimer = $('quoteDisclaimer'),
-                    sigSection = document.querySelector('.signature-section');
-                const measureItem = $('measureReceiptOnlyItem');
-                const tableResponsive = document.querySelector('.table-responsive');
-                const subTotalEl = $('subTotalText'),
-                    installTotalEl = $('installTotalText'),
-                    urgentTotalEl = $('urgentTotalText');
-                const grandTotalEl = $('grandTotalText'),
-                    depPaidEl = $('depositPaidText'),
-                    depPrintEl = $('lblDepositPrintText');
-                const balDueEl = $('balanceDueText');
-                const summaryInstRow = $('summaryInstRow'),
-                    summaryUrgentRow = $('summaryUrgentRow'),
-                    summaryDiscRow = $('summaryDiscRow');
-                const summaryMeasureRow = $('summaryMeasureDeductRow'),
-                    summaryDepRow = $('summaryDepRow'),
-                    summaryBalRow = $('summaryBalRow');
-                const printDateBox = $('printDateBox'),
-                    printMeasureRow = $('printMeasureDateRow'),
-                    printMeasureDate = $('printMeasureDate');
-                const printInstallRow = $('printInstallDateRow'),
-                    printInstallDate = $('printInstallDate');
-                const printRemarksBox = $('printSpecialRemarksBox'),
-                    printRemarksText = $('printSpecialRemarksText');
-                const promoEl = $('ig-promo');
-                updateDocumentTitle();
-                if (currentDocType === 'parking') {
-                    if (invTitleEl) invTitleEl.innerText = d.inv_type_bill;
-                    if (badge) badge.innerText = qNo ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
-                    if (quoteDisclaimer) quoteDisclaimer.style.display = 'none';
-                    if (sigSection) sigSection.style.display = 'none';
-                    const pdfSelector = document.querySelector('.pdf-type-selector');
-                    if (pdfSelector) pdfSelector.style.display = 'flex';
-                    if (promoEl) promoEl.style.display = 'none';
-                    if (measureItem) { measureItem.style.display = 'block';
-                        measureItem.innerHTML = `${d.parking_item_desc}: HK$${tempParkingAmount}`; }
-                    if (tableResponsive) tableResponsive.style.display = 'none';
-                    if (subTotalEl) subTotalEl.innerText = `HK$${tempParkingAmount}`;
-                    if (installTotalEl) installTotalEl.innerText = `HK$0`;
-                    if (summaryInstRow) summaryInstRow.style.display = 'none';
-                    if (urgentTotalEl) urgentTotalEl.innerText = `HK$0`;
-                    if (summaryUrgentRow) summaryUrgentRow.style.display = 'none';
-                    if (summaryDiscRow) summaryDiscRow.style.display = 'none';
-                    if (summaryMeasureRow) summaryMeasureRow.style.display = 'none';
-                    if (grandTotalEl) grandTotalEl.innerText = `HK$${tempParkingAmount}`;
-                    if (summaryDepRow) summaryDepRow.style.display = 'none';
-                    if (summaryBalRow) summaryBalRow.style.display = 'none';
-                    const activeBtn = document.querySelector('.pdf-type-btn.active');
-                    setPdfMode(activeBtn?.id === 'btn-pdf-cust' ? 'customer' : 'company');
-                    if (printDateBox) printDateBox.style.display = 'none';
-                    if (printRemarksBox) printRemarksBox.style.display = 'none';
-                    return;
-                }
-                if (measureItem) measureItem.style.display = 'none';
-                if (tableResponsive) tableResponsive.style.display = 'block';
-                if (currentDocType === 'measure_receipt') {
-                    if (invTitleEl) invTitleEl.innerText = d.inv_type_measure;
-                    if (badge) badge.innerText = (mDate && qNo) ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
-                    if (quoteDisclaimer) quoteDisclaimer.style.display = 'none';
-                    if (sigSection) sigSection.style.display = 'none';
-                    const pdfSelector = document.querySelector('.pdf-type-selector');
-                    if (pdfSelector) pdfSelector.style.display = 'flex';
-                    if (promoEl) promoEl.style.display = 'none';
-                    const highlightEls = document.querySelectorAll('.receipt-highlight, .balance-highlight');
-                    highlightEls.forEach(el => el.style.display = 'flex');
-                    if (measureItem) { measureItem.style.display = 'block';
-                        measureItem.innerHTML = `${d.measure_item_desc}: HK$500`; }
-                    if (tableResponsive) tableResponsive.style.display = 'none';
-                    if (subTotalEl) subTotalEl.innerText = `HK$500`;
-                    if (installTotalEl) installTotalEl.innerText = `HK$0`;
-                    if (summaryInstRow) summaryInstRow.style.display = 'none';
-                    if (urgentTotalEl) urgentTotalEl.innerText = `HK$0`;
-                    if (summaryUrgentRow) summaryUrgentRow.style.display = 'none';
-                    if (summaryDiscRow) summaryDiscRow.style.display = 'none';
-                    if (summaryMeasureRow) summaryMeasureRow.style.display = 'none';
-                    if (grandTotalEl) grandTotalEl.innerText = `HK$500`;
-                    if (depPaidEl) depPaidEl.innerText = `HK$500`;
-                    if (depPrintEl) depPrintEl.innerText = `HK$500`;
-                    if (summaryBalRow) summaryBalRow.style.display = 'none';
-                    if (summaryDepRow) summaryDepRow.style.display = 'flex';
-                    const activeBtn = document.querySelector('.pdf-type-btn.active');
-                    setPdfMode(activeBtn?.id === 'btn-pdf-cust' ? 'customer' : 'company');
-                    return;
-                } else if (!isQuote) {
-                    if (invTitleEl) invTitleEl.innerText = d.inv_type_bill;
-                    if (badge) badge.innerText = qNo ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
-                    if (quoteDisclaimer) quoteDisclaimer.style.display = 'none';
-                    if (sigSection) sigSection.style.display = 'grid';
-                    const pdfSelector = document.querySelector('.pdf-type-selector');
-                    if (pdfSelector) pdfSelector.style.display = 'flex';
-                    if (promoEl) promoEl.style.display = 'none';
-                    const highlightEls = document.querySelectorAll('.receipt-highlight, .balance-highlight');
-                    highlightEls.forEach(el => el.style.display = 'flex');
-                    const activeBtn = document.querySelector('.pdf-type-btn.active');
-                    setPdfMode(activeBtn?.id === 'btn-pdf-cust' ? 'customer' : 'company');
-                } else {
-                    if (invTitleEl) invTitleEl.innerText = d.inv_type_quote;
-                    if (badge) badge.innerText = (mDate && qNo) ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
-                    if (quoteDisclaimer) { quoteDisclaimer.innerText = d.quote_warn;
-                        quoteDisclaimer.style.display = 'block'; }
-                    if (sigSection) sigSection.style.display = 'none';
-                    const pdfSelector = document.querySelector('.pdf-type-selector');
-                    if (pdfSelector) pdfSelector.style.display = 'none';
-                    if (promoEl) promoEl.style.display = 'block';
-                    const highlightEls = document.querySelectorAll('.receipt-highlight, .balance-highlight');
-                    highlightEls.forEach(el => el.style.display = 'none');
-                    document.body.classList.add('mode-customer');
-                }
-                if (mDate || iDate) {
-                    if (printDateBox) printDateBox.style.display = 'block';
-                    if (printMeasureRow) printMeasureRow.style.display = mDate ? 'block' : 'none';
-                    if (printMeasureDate) printMeasureDate.innerText = mDate ? formatDateForDisplay(mDate) : '';
-                    if (printInstallRow) printInstallRow.style.display = iDate ? 'block' : 'none';
-                    if (printInstallDate) printInstallDate.innerText = iDate ? formatDateForDisplay(iDate) : '';
-                } else {
-                    if (printDateBox) printDateBox.style.display = 'none';
-                }
-                const sRem = $('specialRemarks').value;
-                if (sRem && sRem.trim() !== '') {
-                    if (printRemarksBox) printRemarksBox.style.display = 'block';
-                    if (printRemarksText) printRemarksText.innerText = sRem;
-                } else {
-                    if (printRemarksBox) printRemarksBox.style.display = 'none';
-                }
-                if (currentDocType === 'measure_receipt') return;
-                subTotal = 0;
-                installFee = iBase;
-                finalGrandTotal = 0;
-                calcDetailRows = [];
-                const tbody = $('reportTableBody');
-                if (tbody) tbody.innerHTML = '';
-                document.querySelectorAll('.window-item').forEach(item => {
-                    const rT = item.querySelector('.room-type').value,
-                        rN = item.querySelector('.room-num').value;
-                    const l = item.querySelector('.layer-type').value,
-                        rem = item.querySelector('.window-rem').value;
-                    const op = item.querySelector('.open-type').value,
-                        pType = item.querySelector('.motor-power').value;
-                    const mQty = parseInt(item.querySelector('.manual-qty').value) || 0;
-                    const eQty = parseInt(item.querySelector('.motor-qty').value) || 0;
-                    const calc = computeWindowLine(item, d, ctx);
-                    const lineTotal = calc.lineTotal;
-                    subTotal += lineTotal;
-                    let trStyle = d[l] || l;
-                    if (calc.isOverHeight) trStyle +=
-                        ` <span style="color:#b5651d;font-size:10px;">[${d.double_charge}]</span>`;
-                    if (calc.isWindowDouble) trStyle +=
-                        ` <span style="color:#8b5a2b;font-size:10px;font-weight:700;">[${d.double_price_item}]</span>`;
-                    if (calc.isSq && calc.effectiveArea > calc.areaSqFt) {
-                        trStyle += ` <span style="color:#2a7a3a;font-size:10px;">[最低${calc.effectiveArea}sqft]</span>`;
-                    }
-                    let multiplier = 'x1';
-                    if (calc.isOverHeight && calc.isWindowDouble) multiplier = 'x4';
-                    else if (calc.isOverHeight || calc.isWindowDouble) multiplier = 'x2';
-                    calcDetailRows.push({
-                        window: rN ? (d[rT] || rT) + ' ' + rN : (d[rT] || rT),
-                        roomKey: rT,
-                        roomLabel: d[rT] || rT,
-                        layerKey: l,
-                        size: calc.sizeText,
-                        type: d[l] || l,
-                        baseRate: calc.baseRate,
-                        multiplier,
-                        multiplierValue: multiplier === 'x4' ? 4 : (multiplier === 'x2' ? 2 : 1),
-                        formula: calc.formulaText,
-                        formulaDetail: calc.formulaDetail,
-                        productCost: calc.productCost,
-                        tracksCost: calc.tracksCost,
-                        isWindowDouble: calc.isWindowDouble,
-                        total: calc.lineTotal
-                    });
-                    let trackDesc = [];
-                    if (!calc.isSq) { if (mQty) trackDesc.push(`${d.lbl_manual}x${mQty}`); if (eQty) trackDesc.push(
-                            `${d.lbl_motor}x${eQty}(${d[pType]})`); }
-                    if (tbody) {
-                        tbody.innerHTML += `<tr><td><strong>${rN?(d[rT]||rT)+' '+rN:(d[rT]||rT)}</strong></td><td>${calc.sizeText}</td><td>${calc.ftText}</td><td>${trStyle}</td><td class="simple-hide">${(!calc.isSq&&l!=='track_only')?d[op]:'-'}</td><td class="simple-hide">${trackDesc.length>0?trackDesc.join(', '):'-'}</td><td class="simple-hide">${rem||'-'}</td><td>HK$${lineTotal}</td></tr>`;
-                    }
-                });
-                if (subTotalEl) subTotalEl.innerText = `HK$${subTotal}`;
-                if (installTotalEl) installTotalEl.innerText = `HK$${installFee}`;
-                urgentTotal = parseFloat($('urgentCharge').value) || 0;
-                if (urgentTotalEl) urgentTotalEl.innerText = `HK$${urgentTotal}`;
-                if (summaryInstRow) summaryInstRow.style.display = 'flex';
-                if (summaryUrgentRow) summaryUrgentRow.style.display = urgentTotal > 0 ? 'flex' : 'none';
-                if (summaryDiscRow) summaryDiscRow.style.display = 'flex';
-                applyDiscount();
-            } catch (e) {
-                console.error('calculateAll error:', e);
-                pushHint('計算出現錯誤，請檢查資料');
+            const d = dict[currentLang],
+                isQuote = (currentDocType === 'quote');
+            const iBase = parseFloat($('installBase').value) || 0,
+                ctx = getRateContext();
+            const resultBox = $('resultBox');
+            resultBox.classList.remove('open');
+            void resultBox.offsetWidth;
+            resultBox.style.display = 'block';
+            resultBox.classList.add('open');
+            $('ui-btn-print').style.display = 'inline-block';
+            if (currentDocType === 'parking') {
+                $('lblClientName').innerText = tempParkingSurname;
+                $('phoneWrapperLine').style.display = 'none';
+                $('addrLineWrapper').style.display = 'none';
+            } else {
+                const titleVal = $('custTitle').value,
+                    nameVal = $('custName').value;
+                $('lblClientName').innerText = nameVal ? (nameVal + " " + (d[titleVal] || "")) : "---";
+                $('lblClientPhone').innerText = $('custPhone').value || "---";
+                $('phoneWrapperLine').style.display = 'block';
+                const addrList = [$('addrEstate').value, $('addrBlock').value ? `Blk ${$('addrBlock').value}` : "", $(
+                        'addrFloor').value ? `${$('addrFloor').value}/F` : "", $('addrUnit').value ? `Flat ${$('addrUnit')
+                        .value}` : ""].filter(Boolean).join(' ');
+                $('lblInvoiceAddress').innerText = addrList || "---";
+                $('addrLineWrapper').style.display = 'block';
             }
+            $('lblStaffName').innerText = $('staffName').value;
+            const qNo = $('quoteNo').value,
+                mDate = $('measureDate').value,
+                iDate = $('installDate').value;
+            const dateObj = new Date();
+            $('invDate').innerText =
+                `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
+            const invTitleEl = $('ui-inv-type'),
+                badge = $('invoiceNoWrapper'),
+                quoteDisclaimer = $('quoteDisclaimer'),
+                sigSection = document.querySelector('.signature-section');
+            updateDocumentTitle();
+            if (currentDocType === 'parking') {
+                invTitleEl.innerText = d.inv_type_bill;
+                badge.innerText = qNo ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
+                quoteDisclaimer.style.display = 'none';
+                sigSection.style.display = 'none';
+                document.querySelector('.pdf-type-selector').style.display = 'flex';
+                $('ig-promo').style.display = 'none';
+                $('measureReceiptOnlyItem').style.display = 'block';
+                $('measureReceiptOnlyItem').innerHTML = `${d.parking_item_desc}: HK$${tempParkingAmount}`;
+                document.querySelector('.table-responsive').style.display = 'none';
+                $('subTotalText').innerText = `HK$${tempParkingAmount}`;
+                $('installTotalText').innerText = `HK$0`;
+                $('summaryInstRow').style.display = 'none';
+                $('urgentTotalText').innerText = `HK$0`;
+                $('summaryUrgentRow').style.display = 'none';
+                $('summaryDiscRow').style.display = 'none';
+                $('summaryMeasureDeductRow').style.display = 'none';
+                $('grandTotalText').innerText = `HK$${tempParkingAmount}`;
+                $('summaryDepRow').style.display = 'none';
+                $('summaryBalRow').style.display = 'none';
+                setPdfMode(document.querySelector('.pdf-type-btn.active').id === 'btn-pdf-cust' ? 'customer' :
+                    'company');
+                $('printDateBox').style.display = 'none';
+                $('printSpecialRemarksBox').style.display = 'none';
+                return;
+            }
+            $('measureReceiptOnlyItem').style.display = 'none';
+            document.querySelector('.table-responsive').style.display = 'block';
+            if (currentDocType === 'measure_receipt') {
+                invTitleEl.innerText = d.inv_type_measure;
+                badge.innerText = (mDate && qNo) ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
+                quoteDisclaimer.style.display = 'none';
+                sigSection.style.display = 'none';
+                document.querySelector('.pdf-type-selector').style.display = 'flex';
+                $('ig-promo').style.display = 'none';
+                document.querySelectorAll('.receipt-highlight, .balance-highlight').forEach(el => el.style.display =
+                    'flex');
+                $('measureReceiptOnlyItem').style.display = 'block';
+                $('measureReceiptOnlyItem').innerHTML = `${d.measure_item_desc}: HK$500`;
+                document.querySelector('.table-responsive').style.display = 'none';
+                $('subTotalText').innerText = `HK$500`;
+                $('installTotalText').innerText = `HK$0`;
+                $('summaryInstRow').style.display = 'none';
+                $('urgentTotalText').innerText = `HK$0`;
+                $('summaryUrgentRow').style.display = 'none';
+                $('summaryDiscRow').style.display = 'none';
+                $('summaryMeasureDeductRow').style.display = 'none';
+                $('grandTotalText').innerText = `HK$500`;
+                $('depositPaidText').innerText = `HK$500`;
+                $('lblDepositPrintText').innerText = `HK$500`;
+                $('summaryBalRow').style.display = 'none';
+                $('summaryDepRow').style.display = 'flex';
+                setPdfMode(document.querySelector('.pdf-type-btn.active').id === 'btn-pdf-cust' ? 'customer' :
+                    'company');
+                return;
+            } else if (!isQuote) {
+                invTitleEl.innerText = d.inv_type_bill;
+                badge.innerText = qNo ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
+                quoteDisclaimer.style.display = 'none';
+                sigSection.style.display = 'grid';
+                document.querySelector('.pdf-type-selector').style.display = 'flex';
+                $('ig-promo').style.display = 'none';
+                document.querySelectorAll('.receipt-highlight, .balance-highlight').forEach(el => el.style.display =
+                    'flex');
+                setPdfMode(document.querySelector('.pdf-type-btn.active').id === 'btn-pdf-cust' ? 'customer' :
+                    'company');
+            } else {
+                invTitleEl.innerText = d.inv_type_quote;
+                badge.innerText = (mDate && qNo) ? "No: #M" + String(qNo).padStart(5, '0') : "No: ---";
+                quoteDisclaimer.innerText = d.quote_warn;
+                quoteDisclaimer.style.display = 'block';
+                sigSection.style.display = 'none';
+                document.querySelector('.pdf-type-selector').style.display = 'none';
+                $('ig-promo').style.display = 'block';
+                document.querySelectorAll('.receipt-highlight, .balance-highlight').forEach(el => el.style.display =
+                    'none');
+                document.body.classList.add('mode-customer');
+            }
+            if (mDate || iDate) {
+                $('printDateBox').style.display = 'block';
+                $('printMeasureDateRow').style.display = mDate ? 'block' : 'none';
+                $('printMeasureDate').innerText = mDate ? formatDateForDisplay(mDate) : '';
+                $('printInstallDateRow').style.display = iDate ? 'block' : 'none';
+                $('printInstallDate').innerText = iDate ? formatDateForDisplay(iDate) : '';
+            } else { $('printDateBox').style.display = 'none'; }
+            const sRem = $('specialRemarks').value;
+            if (sRem.trim() !== '') { $('printSpecialRemarksBox').style.display = 'block';
+                $('printSpecialRemarksText').innerText = sRem; } else { $('printSpecialRemarksBox').style.display =
+                    'none'; }
+            if (currentDocType === 'measure_receipt') return;
+            subTotal = 0;
+            installFee = iBase;
+            finalGrandTotal = 0;
+            calcDetailRows = [];
+            const tbody = $('reportTableBody');
+            tbody.innerHTML = '';
+            document.querySelectorAll('.window-item').forEach(item => {
+                const rT = item.querySelector('.room-type').value,
+                    rN = item.querySelector('.room-num').value;
+                const l = item.querySelector('.layer-type').value,
+                    rem = item.querySelector('.window-rem').value;
+                const op = item.querySelector('.open-type').value,
+                    pType = item.querySelector('.motor-power').value;
+                const mQty = parseInt(item.querySelector('.manual-qty').value) || 0;
+                const eQty = parseInt(item.querySelector('.motor-qty').value) || 0;
+                const calc = computeWindowLine(item, d, ctx);
+                const lineTotal = calc.lineTotal;
+                subTotal += lineTotal;
+                let trStyle = d[l] || l;
+                if (calc.isOverHeight) trStyle +=
+                    ` <span style="color:#b5651d;font-size:10px;">[${d.double_charge}]</span>`;
+                if (calc.isWindowDouble) trStyle +=
+                    ` <span style="color:#8b5a2b;font-size:10px;font-weight:700;">[${d.double_price_item}]</span>`;
+                if (calc.isSq && calc.effectiveArea > calc.areaSqFt) {
+                    trStyle += ` <span style="color:#2a7a3a;font-size:10px;">[最低${calc.effectiveArea}sqft]</span>`;
+                }
+                let multiplier = 'x1';
+                if (calc.isOverHeight && calc.isWindowDouble) multiplier = 'x4';
+                else if (calc.isOverHeight || calc.isWindowDouble) multiplier = 'x2';
+                calcDetailRows.push({
+                    window: rN ? (d[rT] || rT) + ' ' + rN : (d[rT] || rT),
+                    roomKey: rT,
+                    roomLabel: d[rT] || rT,
+                    layerKey: l,
+                    size: calc.sizeText,
+                    type: d[l] || l,
+                    baseRate: calc.baseRate,
+                    multiplier,
+                    multiplierValue: multiplier === 'x4' ? 4 : (multiplier === 'x2' ? 2 : 1),
+                    formula: calc.formulaText,
+                    formulaDetail: calc.formulaDetail,
+                    productCost: calc.productCost,
+                    tracksCost: calc.tracksCost,
+                    isWindowDouble: calc.isWindowDouble,
+                    total: calc.lineTotal
+                });
+                let trackDesc = [];
+                if (!calc.isSq) { if (mQty) trackDesc.push(`${d.lbl_manual}x${mQty}`); if (eQty) trackDesc.push(
+                        `${d.lbl_motor}x${eQty}(${d[pType]})`); }
+                tbody.innerHTML += `<tr><td><strong>${rN?(d[rT]||rT)+' '+rN:(d[rT]||rT)}</strong></td><td>${calc.sizeText}</td><td>${calc.ftText}</td><td>${trStyle}</td><td class="simple-hide">${(!calc.isSq&&l!=='track_only')?d[op]:'-'}</td><td class="simple-hide">${trackDesc.length>0?trackDesc.join(', '):'-'}</td><td class="simple-hide">${rem||'-'}</td><td>HK$${lineTotal}</td></tr>`;
+            });
+            $('subTotalText').innerText = `HK$${subTotal}`;
+            $('installTotalText').innerText = `HK$${installFee}`;
+            urgentTotal = parseFloat($('urgentCharge').value) || 0;
+            $('urgentTotalText').innerText = `HK$${urgentTotal}`;
+            $('summaryInstRow').style.display = 'flex';
+            $('summaryUrgentRow').style.display = urgentTotal > 0 ? 'flex' : 'none';
+            $('summaryDiscRow').style.display = 'flex';
+            applyDiscount();
         }
 
         function applyDiscount() {
             const discRatio = parseFloat($('discountSelect').value);
             let finalSub = subTotal * discRatio;
             const discAmt = subTotal - finalSub;
-            const discLabel = $('lblDiscountText');
-            if (discLabel) {
-                if (discAmt > 0.01) { discLabel.innerText = `-HK$${Math.round(discAmt)}`;
-                    discLabel.style.display = 'inline'; } else { discLabel.innerText = '-';
-                    discLabel.style.display = 'inline'; }
-            }
+            if (discAmt > 0.01) { $('lblDiscountText').innerText = `-HK$${Math.round(discAmt)}`;
+                $('lblDiscountText').style.display = 'inline'; } else { $('lblDiscountText').innerText = '-';
+                $('lblDiscountText').style.display = 'inline'; }
             const deductMeasure = $('chkDeductMeasure').checked ? 500 : 0;
-            const measureRow = $('summaryMeasureDeductRow');
-            if (measureRow) {
-                measureRow.style.display = deductMeasure > 0 ? 'flex' : 'none';
-                if (deductMeasure > 0) {
-                    const span = measureRow.querySelector('span:last-child');
-                    if (span) span.innerText = `-HK$${deductMeasure}`;
-                }
-            }
+            $('summaryMeasureDeductRow').style.display = deductMeasure > 0 ? 'flex' : 'none';
+            if (deductMeasure > 0) { document.querySelector('#summaryMeasureDeductRow span:last-child').innerText =
+                    `-HK$${deductMeasure}`; }
             finalGrandTotal = Math.round(finalSub + installFee + urgentTotal - deductMeasure);
-            const grandEl = $('grandTotalText');
-            if (grandEl) grandEl.innerText = `HK$${finalGrandTotal}`;
+            $('grandTotalText').innerText = `HK$${finalGrandTotal}`;
             updateDepositDisplay();
         }
 
@@ -4695,10 +4639,8 @@
             else if (depMode === 'measure_only') depositPaid = 500;
             else if (depMode === 'custom') depositPaid = parseFloat($('customDepositVal').value) || 0;
             if (depMode !== 'measure_only' && depositPaid > finalGrandTotal) depositPaid = finalGrandTotal;
-            const depPaid = $('depositPaidText');
-            if (depPaid) depPaid.innerText = `HK$${Math.round(depositPaid)}`;
-            const depPrint = $('lblDepositPrintText');
-            if (depPrint) depPrint.innerText = `HK$${Math.round(depositPaid)}`;
+            $('depositPaidText').innerText = `HK$${Math.round(depositPaid)}`;
+            $('lblDepositPrintText').innerText = `HK$${Math.round(depositPaid)}`;
             const balance = finalGrandTotal - depositPaid;
             const balEl = $('balanceDueText');
             if (balEl) balEl.innerText = `HK$${Math.round(balance)}`;
@@ -4734,61 +4676,44 @@
 
         function handleDepositChange() {
             const val = $('depositSelect').value;
-            const wrap = $('customDepositWrapper');
-            if (wrap) wrap.style.display = val === 'custom' ? 'block' : 'none';
+            $('customDepositWrapper').style.display = val === 'custom' ? 'block' : 'none';
             if ($('resultBox').style.display === 'block') calculateAll();
             autoSaveDraft();
         }
 
         // ===== 生成文件 =====
         function generateDoc(type) {
-            try {
-                currentDocType = type;
-                saveCustomerProfile();
-                if (type === 'parking') {
-                    const staff = ['Henry', 'Emily', 'Helen', 'Anson', 'Edison'];
-                    $('staffName').value = staff[Math.floor(Math.random() * staff.length)];
-                    $('quoteNo').value = Math.floor(Math.random() * 90000) + 10000;
-                    tempParkingAmount = Math.floor(Math.random() * (1000 - 800 + 1)) + 800;
-                    const surnames = ['陳', '林', '黃', '張', '李', '何', '吳', '王', '劉', '楊', '鄭', '郭', '梁', '周', '曾', '蔡', '葉',
-                        '許'
-                    ];
-                    tempParkingSurname = surnames[Math.floor(Math.random() * surnames.length)];
-                }
-                calculateAll();
-                if ($('quoteNo').value) saveCurrentQuoteRecord();
-                setTimeout(() => {
-                    const box = $('resultBox');
-                    if (box) box.scrollIntoView({ behavior: 'smooth' });
-                }, 100);
-            } catch (e) {
-                console.error('generateDoc error:', e);
-                pushHint('生成單據時發生錯誤，請重試');
+            currentDocType = type;
+            saveCustomerProfile();
+            if (type === 'parking') {
+                const staff = ['Henry', 'Emily', 'Helen', 'Anson', 'Edison'];
+                $('staffName').value = staff[Math.floor(Math.random() * staff.length)];
+                $('quoteNo').value = Math.floor(Math.random() * 90000) + 10000;
+                tempParkingAmount = Math.floor(Math.random() * (1000 - 800 + 1)) + 800;
+                const surnames = ['陳', '林', '黃', '張', '李', '何', '吳', '王', '劉', '楊', '鄭', '郭', '梁', '周', '曾', '蔡', '葉',
+                    '許'
+                ];
+                tempParkingSurname = surnames[Math.floor(Math.random() * surnames.length)];
             }
+            calculateAll();
+            if ($('quoteNo').value) saveCurrentQuoteRecord();
+            setTimeout(() => { $('resultBox').scrollIntoView({ behavior: 'smooth' }); }, 100);
         }
 
         function resetForm() {
             if (!confirm(dict[currentLang].confirm_reset)) return;
             ['custName', 'custPhone', 'quoteNo', 'addrEstate', 'addrBlock', 'addrFloor', 'addrUnit', 'measureDate',
                 'installDate', 'urgentCharge', 'specialRemarks'
-            ].forEach(id => { const el = $(id); if (el) el.value = ''; });
-            const chk = $('chkDeductMeasure');
-            if (chk) chk.checked = false;
-            const dep = $('depositSelect');
-            if (dep) dep.value = '0';
-            const custDep = $('customDepositVal');
-            if (custDep) custDep.value = 0;
-            const wrap = $('customDepositWrapper');
-            if (wrap) wrap.style.display = 'none';
-            const disc = $('discountSelect');
-            if (disc) disc.value = '1.0';
-            const list = $('windowList');
-            if (list) list.innerHTML = '';
+            ].forEach(id => $(id).value = '');
+            $('chkDeductMeasure').checked = false;
+            $('depositSelect').value = '0';
+            $('customDepositVal').value = 0;
+            $('customDepositWrapper').style.display = 'none';
+            $('discountSelect').value = '1.0';
+            $('windowList').innerHTML = '';
             addWindow();
-            const box = $('resultBox');
-            if (box) box.style.display = 'none';
-            const printBtn = $('ui-btn-print');
-            if (printBtn) printBtn.style.display = 'none';
+            $('resultBox').style.display = 'none';
+            $('ui-btn-print').style.display = 'none';
             updateDocumentTitle();
             updateWindowCount();
             autoSaveDraft();
@@ -4812,8 +4737,8 @@
             const phone = $('custPhone').value || '-';
             const addr = [$('addrEstate').value, $('addrBlock').value, $('addrFloor').value, $('addrUnit').value]
                 .filter(Boolean).join(' ') || '-';
-            const total = $('grandTotalText')?.innerText || 'HK$0',
-                deposit = $('depositPaidText')?.innerText || 'HK$0';
+            const total = $('grandTotalText').innerText || 'HK$0',
+                deposit = $('depositPaidText').innerText || 'HK$0';
             const balance = $('balanceDueText')?.innerText || 'HK$0',
                 installDate = $('installDate').value || '-';
             if (template === 'engineering') {
@@ -4952,29 +4877,26 @@
             const full = $('btn-mode-full'),
                 simple = $('btn-mode-simple');
             if (mode === 'simple') { document.body.classList.add('mode-simple');
-                if (simple) simple.classList.add('active');
-                if (full) full.classList.remove('active'); } else { document.body.classList.remove('mode-simple');
-                if (full) full.classList.add('active');
-                if (simple) simple.classList.remove('active'); }
+                simple.classList.add('active');
+                full.classList.remove('active'); } else { document.body.classList.remove('mode-simple');
+                full.classList.add('active');
+                simple.classList.remove('active'); }
             if ($('resultBox').style.display === 'block') calculateAll();
         }
 
         function setPdfMode(mode) {
-            const cust = $('btn-pdf-cust'),
-                comp = $('btn-pdf-comp');
-            if (cust) cust.classList.remove('active');
-            if (comp) comp.classList.remove('active');
-            if (mode === 'customer') { document.body.classList.add('mode-customer'); if (cust) cust.classList.add(
-                    'active'); } else { document.body.classList.remove('mode-customer'); if (comp) comp.classList.add(
-                    'active'); }
+            $('btn-pdf-cust').classList.remove('active');
+            $('btn-pdf-comp').classList.remove('active');
+            if (mode === 'customer') { document.body.classList.add('mode-customer');
+                $('btn-pdf-cust').classList.add('active'); } else { document.body.classList.remove('mode-customer');
+                $('btn-pdf-comp').classList.add('active'); }
         }
 
         // ===== 摺疊控制 =====
         function toggleSection(panelId, btnId) {
             const panel = $(panelId),
-                skeleton = $(panelId + 'Skeleton');
-            if (!panel) return;
-            const isHidden = panel.style.display === 'none';
+                skeleton = $(panelId + 'Skeleton'),
+                isHidden = panel.style.display === 'none';
             if (isHidden) {
                 if (skeleton) skeleton.style.display = 'block';
                 setTimeout(() => {
@@ -5006,9 +4928,8 @@
 
         function toggleSettingsCollapse() {
             const wrap = $('settingsCollapseWrap'),
-                btn = $('btnDataManage');
-            if (!wrap || !btn) return;
-            const label = btn.querySelector('span:first-child');
+                btn = $('btnDataManage'),
+                label = btn.querySelector('span:first-child');
             if (wrap.classList.contains('collapsed')) { wrap.classList.remove('collapsed');
                 wrap.classList.add('open'); if (label) label.textContent = dict[currentLang]
                     .ui_data_manage_collapse || '收合 ▲'; } else { wrap.classList.add('collapsed');
@@ -5022,7 +4943,6 @@
         function toggleConverter() {
             const panel = $('converterPanel');
             const btn = $('btnToggleConverter');
-            if (!panel || !btn) return;
             panel.classList.toggle('open');
             if (panel.classList.contains('open')) { btn.classList.add('active');
                 btn.textContent = '📐 換算器 ✕'; } else { btn.classList.remove('active');
@@ -5032,8 +4952,8 @@
         }
 
         function convertLength() {
-            const input = parseFloat($('convLengthInput')?.value) || 0;
-            const unit = $('convLengthUnit')?.value || 'cm';
+            const input = parseFloat($('convLengthInput').value) || 0;
+            const unit = $('convLengthUnit').value;
             const toMM = { mm: 1, cm: 10, m: 1000, inch: 25.4, ft: 304.8, yd: 914.4 };
             const mm = input * (toMM[unit] || 1);
             const map = {
@@ -5045,13 +4965,10 @@
                 yd: v => v / 914.4
             };
             const units = ['mm', 'cm', 'm', 'inch', 'ft', 'yd'];
-            units.forEach((u) => {
+            units.forEach((u, i) => {
                 const el = document.getElementById(`cl-${u}`);
-                if (el) {
-                    const val = map[u](mm);
-                    el.textContent = u === 'mm' ? Math.round(val * 100) / 100 : (val < 0.01 ? '<0.01' : Math
-                        .round(val * 100) / 100);
-                }
+                if (el) el.textContent = u === 'mm' ? Math.round(map[u](mm) * 100) / 100 : (map[u](mm) < 0.01 ?
+                    '<0.01' : Math.round(map[u](mm) * 100) / 100);
             });
         }
 
@@ -5105,9 +5022,9 @@
         }
 
         function convertArea() {
-            const len = parseFloat($('convAreaLen')?.value) || 0;
-            const wid = parseFloat($('convAreaWid')?.value) || 0;
-            const unit = $('convAreaUnit')?.value || 'cm';
+            const len = parseFloat($('convAreaLen').value) || 0;
+            const wid = parseFloat($('convAreaWid').value) || 0;
+            const unit = $('convAreaUnit').value;
             const toMM = { mm: 1, cm: 10, m: 1000, inch: 25.4, ft: 304.8, yd: 914.4 };
             const mmLen = len * toMM[unit],
                 mmWid = wid * toMM[unit];
@@ -5124,7 +5041,7 @@
             const resultEl = $('convAreaResult');
             if (resultEl) resultEl.textContent =
                 `📐 面積 = ${len} × ${wid} ${unit} = ${Math.round(areaMM2)} mm² = ${Math.round(map.cm2(areaMM2)*100)/100} cm² = ${Math.round(map.m2(areaMM2)*10000)/10000} m²`;
-            units.forEach((u) => {
+            units.forEach((u, i) => {
                 const el = document.getElementById(`ca-${u}`);
                 if (el) {
                     const val = map[u](areaMM2);
@@ -5201,73 +5118,66 @@
             const dmBtn = $('ui-data-manage-btn');
             if (dmBtn) dmBtn.textContent = $('settingsCollapseWrap').classList.contains('collapsed') ? d
                 .ui_data_manage_expand : d.ui_data_manage_collapse;
-            const nameInput = $('custName');
-            if (nameInput) nameInput.placeholder = d.ph_cust_name;
-            const phoneInput = $('custPhone');
-            if (phoneInput) phoneInput.placeholder = d.ph_phone;
-            const estateInput = $('addrEstate');
-            if (estateInput) estateInput.placeholder = d.ph_estate;
-            const blockInput = $('addrBlock');
-            if (blockInput) blockInput.placeholder = d.ph_block;
-            const floorInput = $('addrFloor');
-            if (floorInput) floorInput.placeholder = d.ph_floor;
-            const unitInput = $('addrUnit');
-            if (unitInput) unitInput.placeholder = d.ph_unit;
-            const depSel = $('depositSelect');
-            if (depSel) {
-                const depVal = depSel.value;
-                depSel.innerHTML =
-                    `<option value="0">${d.dep_none}</option><option value="measure_only">${d.dep_measure_only}</option><option value="0.5">${d.dep_50}</option><option value="0.3">${d.dep_30}</option><option value="custom">${d.dep_custom}</option>`;
-                depSel.value = depVal;
-            }
-            const titleEl = $('ui-main-title');
-            if (titleEl) titleEl.innerText = d.title;
-            setTxt('ui-sum-sub', d.sum_sub + ":");
-            setTxt('ui-sum-inst', d.sum_inst + ":");
-            setTxt('ui-sum-urgent', d.sum_urgent + ":");
-            setTxt('ui-sum-disc', d.sum_disc + ":");
-            setTxt('ui-sum-grand', d.sum_grand + ":");
-            setTxt('ui-sum-measure-deduct', d.sum_meas_deduct + ":");
-            setTxt('ui-sum-dep-paid', d.sum_dep_paid + ":");
-            setTxt('ui-sum-balance', d.sum_balance + ":");
-            setTxt('ui-ft-1', d.ft1);
-            setTxt('ui-ft-2', d.ft2);
-            setTxt('ui-ft-val', d.ft_val);
-            setTxt('ui-ft-dep', d.ft_dep);
-            setTxt('ui-pdf-sel-lbl', d.pdf_sel);
-            setTxt('btn-pdf-cust', d.pdf_cust);
-            setTxt('btn-pdf-comp', d.pdf_comp);
-            setTxt('ui-inv-date', d.inv_date);
-            setTxt('lbl_print_mdate', d.lbl_m_date);
-            setTxt('lbl_print_idate', d.lbl_i_date);
-            setTxt('ui-sig-client', d.sig_client);
-            setTxt('ui-sig-comp', d.sig_comp);
-            setTxt('th-size', d.th_size);
-            setTxt('th-ft', d.th_ft);
-            setTxt('th-type', d.th_type);
-            setTxt('th-open', d.th_open);
-            setTxt('th-motor', d.th_motor);
-            setTxt('th-rem', d.th_rem);
-            setTxt('th-sub', d.th_sub);
-            setTxt('ui-btn-quote', d.btn_quote);
-            setTxt('ui-btn-invoice', d.btn_invoice);
-            setTxt('ui-btn-measure-receipt', d.btn_measure_receipt);
-            setTxt('ui-btn-print', d.btn_print);
-            setTxt('ui-btn-reset', d.btn_reset);
-            setTxt('ui-btn-wa-copy', d.btn_wa_copy);
-            setTxt('ui-btn-install-copy', d.btn_install_copy);
-            setTxt('ui-ft-tech', d.tech);
-            const waSel = $('waTemplate');
-            if (waSel) { const v = waSel.value;
-                waSel.innerHTML =
+            $('custName').placeholder = d.ph_cust_name;
+            $('custPhone').placeholder = d.ph_phone;
+            $('addrEstate').placeholder = d.ph_estate;
+            $('addrBlock').placeholder = d.ph_block;
+            $('addrFloor').placeholder = d.ph_floor;
+            $('addrUnit').placeholder = d.ph_unit;
+            const depSel = $('depositSelect'),
+                depVal = depSel.value;
+            depSel.innerHTML =
+                `<option value="0">${d.dep_none}</option><option value="measure_only">${d.dep_measure_only}</option><option value="0.5">${d.dep_50}</option><option value="0.3">${d.dep_30}</option><option value="custom">${d.dep_custom}</option>`;
+            depSel.value = depVal;
+            $('ui-main-title').innerText = d.title;
+            $('ui-sum-sub').innerText = d.sum_sub + ":";
+            $('ui-sum-inst').innerText = d.sum_inst + ":";
+            $('ui-sum-urgent').innerText = d.sum_urgent + ":";
+            $('ui-sum-disc').innerText = d.sum_disc + ":";
+            $('ui-sum-grand').innerText = d.sum_grand + ":";
+            $('ui-sum-measure-deduct').innerText = d.sum_meas_deduct + ":";
+            $('ui-sum-dep-paid').innerText = d.sum_dep_paid + ":";
+            $('ui-sum-balance').innerText = d.sum_balance + ":";
+            $('ui-ft-1').innerText = d.ft1;
+            $('ui-ft-2').innerText = d.ft2;
+            $('ui-ft-val').innerText = d.ft_val;
+            $('ui-ft-dep').innerText = d.ft_dep;
+            $('ui-pdf-sel-lbl').innerText = d.pdf_sel;
+            $('btn-pdf-cust').innerText = d.pdf_cust;
+            $('btn-pdf-comp').innerText = d.pdf_comp;
+            $('ui-inv-date').innerText = d.inv_date;
+            $('lbl_print_mdate').innerText = d.lbl_m_date;
+            $('lbl_print_idate').innerText = d.lbl_i_date;
+            const addrLabel = $('ui-lbl-inv-addr');
+            if (addrLabel) addrLabel.innerText = d.inv_addr + ':';
+            $('ui-sig-client').innerText = d.sig_client;
+            $('ui-sig-comp').innerText = d.sig_comp;
+            $('th-size').innerText = d.th_size;
+            $('th-ft').innerText = d.th_ft;
+            $('th-type').innerText = d.th_type;
+            $('th-open').innerText = d.th_open;
+            $('th-motor').innerText = d.th_motor;
+            $('th-rem').innerText = d.th_rem;
+            $('th-sub').innerText = d.th_sub;
+            $('ui-btn-quote').innerText = d.btn_quote;
+            $('ui-btn-invoice').innerText = d.btn_invoice;
+            $('ui-btn-measure-receipt').innerText = d.btn_measure_receipt;
+            $('ui-btn-print').innerText = d.btn_print;
+            $('ui-btn-reset').innerText = d.btn_reset;
+            $('ui-btn-wa-copy').innerText = d.btn_wa_copy;
+            $('ui-btn-install-copy').innerText = d.btn_install_copy;
+            $('ui-ft-tech').innerText = d.tech;
+            const wa = $('waTemplate');
+            if (wa) { const v = wa.value;
+                wa.innerHTML =
                     `<option value="compact">${d.wa_compact}</option><option value="detailed">${d.wa_detailed}</option><option value="engineering">${d.wa_engineering}</option>`;
-                waSel.value = v; }
-            setTxt('conv-length-title', d.conv_length_title || '📏 長度換算');
-            setTxt('conv-area-title', d.conv_area_title || '📐 面積換算 (長 × 寬)');
-            setTxt('conv-lbl-value', d.conv_lbl_value || '數值');
-            setTxt('conv-lbl-len', d.conv_lbl_len || '長');
-            setTxt('conv-lbl-wid', d.conv_lbl_wid || '寬');
-            setTxt('conv-lbl-unit', d.conv_lbl_unit || '單位');
+                wa.value = v; }
+            $('conv-length-title').innerText = d.conv_length_title || '📏 長度換算';
+            $('conv-area-title').innerText = d.conv_area_title || '📐 面積換算 (長 × 寬)';
+            $('conv-lbl-value').innerText = d.conv_lbl_value || '數值';
+            $('conv-lbl-len').innerText = d.conv_lbl_len || '長';
+            $('conv-lbl-wid').innerText = d.conv_lbl_wid || '寬';
+            $('conv-lbl-unit').innerText = d.conv_lbl_unit || '單位';
 
             document.querySelectorAll('.window-item').forEach(winItem => {
                 const d2 = dict[currentLang];
@@ -5343,30 +5253,32 @@
                 if (rmBtn) rmBtn.innerText = d2.delete;
             });
             const ctOpts = { mr: d.mr, ms: d.ms, mrs: d.mrs, dr: d.dr };
-            const cSel = $('custTitle');
-            if (cSel) { const cVal = cSel.value;
-                cSel.innerHTML = Object.keys(ctOpts).map(k => `<option value="${k}">${ctOpts[k]}</option>`).join('');
-                cSel.value = cVal; }
+            const cSel = $('custTitle'),
+                cVal = cSel.value;
+            cSel.innerHTML = Object.keys(ctOpts).map(k => `<option value="${k}">${ctOpts[k]}</option>`).join('');
+            cSel.value = cVal;
             renderQuoteHistorySelect();
             refreshAllShellStatus();
             if ($('resultBox').style.display === 'block') calculateAll();
         }
 
         function applyRemarkTemplate() {
-            const val = $('remarkTemplate')?.value;
-            if (val) { const ta = $('specialRemarks'); if (ta) { ta.value = ta.value ? ta.value + '\n' + val : val; } const
-                    sel = $('remarkTemplate'); if (sel) sel.value = ''; if ($('resultBox').style.display === 'block')
-                    calculateAll();
+            const val = $('remarkTemplate').value;
+            if (val) { const ta = $('specialRemarks');
+                ta.value = ta.value ? ta.value + '\n' + val : val;
+                $('remarkTemplate').value = '';
+                if ($('resultBox').style.display === 'block') calculateAll();
                 autoSaveDraft(); }
         }
 
         // ===== 初始化 =====
         window.addEventListener('load', function() {
             document.querySelectorAll('.mini-panel').forEach(p => p.classList.remove('open'));
-            const convPanel = $('converterPanel');
-            if (convPanel) convPanel.classList.remove('open');
+            $('converterPanel').classList.remove('open');
             convertArea();
             updateWindowCount();
+            const addrLabel = $('ui-lbl-inv-addr');
+            if (addrLabel) addrLabel.innerText = 'Address:';
             // 修復手機版：確保所有按鈕可點擊
             document.querySelectorAll('button, .btn-action, .add-btn, .remove-btn, .toggle-section-btn, .mode-btn, .lang-btn, .btn-parking, .btn-tool, .platform-quick-btn, .history-btn, .template-action-btn, .sync-btn, .pdf-type-btn').forEach(el => {
                 if (!el.hasAttribute('type')) el.setAttribute('type', 'button');
