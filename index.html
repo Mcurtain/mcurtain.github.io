@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="zh-HK">
-<head>
+<html lang="zh-HK"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes, maximum-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="theme-color" content="#4a3326">
-    <title>MCurtain 報價系統</title>
+    <title>M00000_未命名_報價單</title>
     <style>
         /* ===== 全局變量與重置 ===== */
         :root {
@@ -2070,15 +2068,15 @@
         }
     </style>
 </head>
-<body onload="loadConfig()" class="mode-customer">
+<body onload="loadConfig()" class="mode-customer mode-simple">
 
     <!-- ===== 頂部控制欄 ===== -->
     <div class="top-ctrl">
         <div class="top-left">
             <div class="mode-toggle-container">
                 <span id="ui-mode-label" style="font-size:12px;font-weight:700;color:#513c2f;margin-right:4px;">模式:</span>
-                <button class="mode-btn premium active" id="btn-mode-full" data-action="setUiMode" data-mode="full">完整</button>
-                <button class="mode-btn" id="btn-mode-simple" data-action="setUiMode" data-mode="simple">精簡</button>
+                <button class="mode-btn premium" id="btn-mode-full" data-action="setUiMode" data-mode="full" type="button" style="touch-action: manipulation;">完整</button>
+                <button class="mode-btn active" id="btn-mode-simple" data-action="setUiMode" data-mode="simple" type="button" style="touch-action: manipulation;">精簡</button>
                 <span class="staff-select-wrap">
                     <span id="ui-lbl-staff-top">員工</span>
                     <select id="staffName" onchange="saveConfig()">
@@ -2086,15 +2084,15 @@
                         <option value="Helen">Helen</option><option value="Anson">Anson</option><option value="Edison">Edison</option>
                     </select>
                 </span>
-                <button class="btn-parking" id="ui-btn-parking" data-action="generateDoc" data-doc="parking">🅿️ 泊車</button>
-                <button class="btn-tool" id="btnToggleConverter" data-action="toggleConverter">📐 換算器</button>
+                <button class="btn-parking" id="ui-btn-parking" data-action="generateDoc" data-doc="parking" type="button" style="touch-action: manipulation;">🅿️ 泊車</button>
+                <button class="btn-tool" id="btnToggleConverter" data-action="toggleConverter" type="button" style="touch-action: manipulation;">📐 換算器</button>
             </div>
         </div>
         <div class="top-right">
             <div class="lang-group">
-                <button class="lang-btn active" data-action="changeLang" data-lang="zh_tw">繁體</button>
-                <button class="lang-btn" data-action="changeLang" data-lang="zh_cn">简体</button>
-                <button class="lang-btn" data-action="changeLang" data-lang="en">EN</button>
+                <button class="lang-btn active" data-action="changeLang" data-lang="zh_tw" type="button" style="touch-action: manipulation;">繁體</button>
+                <button class="lang-btn" data-action="changeLang" data-lang="zh_cn" type="button" style="touch-action: manipulation;">简体</button>
+                <button class="lang-btn" data-action="changeLang" data-lang="en" type="button" style="touch-action: manipulation;">EN</button>
             </div>
         </div>
     </div>
@@ -2109,7 +2107,7 @@
                     <input type="number" id="convLengthInput" value="1" step="any" min="0" oninput="convertLength()">
                     <select id="convLengthUnit" onchange="convertLength()">
                         <option value="mm">mm</option>
-                        <option value="cm" selected>cm</option>
+                        <option value="cm" selected="">cm</option>
                         <option value="m">m</option>
                         <option value="inch">in</option>
                         <option value="ft">ft</option>
@@ -2140,7 +2138,7 @@
                         <label id="conv-lbl-unit">單位</label>
                         <select id="convAreaUnit" onchange="convertArea()">
                             <option value="mm">mm</option>
-                            <option value="cm" selected>cm</option>
+                            <option value="cm" selected="">cm</option>
                             <option value="m">m</option>
                             <option value="inch">in</option>
                             <option value="ft">ft</option>
@@ -2170,7 +2168,7 @@
         <div class="dashboard-card primary wide">
             <strong id="ui-dash-title">商戶總覽</strong>
             <span id="ui-dash-subtitle">本機為主</span>
-            <small id="ui-dash-detail">本機：15張 · 0組客戶</small>
+            <small id="ui-dash-detail">本機：9張 · 0組客戶</small>
         </div>
         <div class="dashboard-card">
             <strong>窗位總數</strong>
@@ -2179,7 +2177,7 @@
         </div>
         <div class="dashboard-card">
             <strong id="ui-dash-quotes-label">已儲存單據</strong>
-            <span id="ui-dash-quotes">15</span>
+            <span id="ui-dash-quotes">9</span>
             <small id="ui-dash-quotes-hint">快速找回舊單</small>
         </div>
         <div class="dashboard-card">
@@ -2194,8 +2192,8 @@
         </div>
         <div class="dashboard-card">
             <strong id="ui-dash-updated-label">最近更新</strong>
-            <span id="ui-dash-updated">6/22/2026, 4:17:01 AM</span>
-            <small id="ui-dash-updated-hint">最後單號 M21402</small>
+            <span id="ui-dash-updated">6/25/2026, 1:20:26 AM</span>
+            <small id="ui-dash-updated-hint">最後單號 M85187</small>
         </div>
     </div>
 
@@ -2207,11 +2205,11 @@
         <h2 id="ui-main-title">窗簾及工程報價系統</h2>
 
         <!-- ===== 系統底價 ===== -->
-        <button class="toggle-section-btn simple-hide" onclick="toggleSection('panelSystemSettings','btnToggleSys')">
+        <button class="toggle-section-btn simple-hide" onclick="toggleSection('panelSystemSettings','btnToggleSys')" type="button" style="touch-action: manipulation;">
             <span id="btnToggleSys">⚙️ 系統底價配置</span><span>▼</span>
         </button>
-        <div class="panel-skeleton" id="panelSystemSettingsSkeleton"></div>
-        <div id="panelSystemSettings" class="panel" style="display:none;">
+        <div class="panel-skeleton" id="panelSystemSettingsSkeleton" style="display: none;"></div>
+        <div id="panelSystemSettings" class="panel" style="display: none;">
             <div class="panel-title" id="ui-panel-sys">核心底價設定 (自動儲存)</div>
             <div class="row">
                 <div class="col"><label>布簾固定價 ($/橫呎):</label><input type="number" id="rateCurtainFixed" value="50" oninput="saveConfig()"></div>
@@ -2238,10 +2236,10 @@
         <!-- ===== 頂部資料管理 ===== -->
         <div class="top-settings-bar">
             <span class="settings-label">📁 資料管理</span>
-            <button class="settings-btn" id="btnDataManage" onclick="toggleSettingsCollapse()">
+            <button class="settings-btn" id="btnDataManage" onclick="toggleSettingsCollapse()" type="button" style="touch-action: manipulation;">
                 <span id="ui-data-manage-btn">展開 ▼</span><span class="badge">3</span>
             </button>
-            <button class="settings-btn" onclick="toggleSection('panelSystemSettings','btnToggleSys')" style="margin-left:auto;">⚙️ 底價</button>
+            <button class="settings-btn" onclick="toggleSection('panelSystemSettings','btnToggleSys')" style="margin-left: auto; touch-action: manipulation;" type="button">⚙️ 底價</button>
         </div>
 
         <!-- ===== 摺疊：模板 + 歷史 + 同步 ===== -->
@@ -2260,8 +2258,8 @@
                                     <option value="slot2" id="tpl-slot-2">模板 B</option>
                                     <option value="slot3" id="tpl-slot-3">模板 C</option>
                                 </select>
-                                <button class="template-action-btn" id="ui-btn-save-template" data-action="saveCurrentWindowTemplate">儲存</button>
-                                <button class="template-action-btn template-action-primary" id="ui-btn-apply-template" data-action="applyTemplateToNewWindow">套用</button>
+                                <button class="template-action-btn" id="ui-btn-save-template" data-action="saveCurrentWindowTemplate" type="button" style="touch-action: manipulation;">儲存</button>
+                                <button class="template-action-btn template-action-primary" id="ui-btn-apply-template" data-action="applyTemplateToNewWindow" type="button" style="touch-action: manipulation;">套用</button>
                             </div>
                         </div>
                     </div>
@@ -2276,27 +2274,79 @@
                                 <span id="ui-history-hint">儲存/載入/匯出/匯入</span>
                                 <div class="history-tools">
                                     <input type="search" id="quoteHistorySearch" placeholder="搜尋單號 / 客戶 / 電話 / 備註" oninput="renderQuoteHistorySelect()">
-                                    <select id="historyVersionSelect" onchange="renderHistoryVersionSelect()"><option value="0">最新 · 6/22/2026, 3:33:25 AM</option><option value="1">v2 · 6/22/2026, 3:33:24 AM</option><option value="2">v3 · 6/22/2026, 3:33:03 AM</option></select>
+                                    <select id="historyVersionSelect" onchange="renderHistoryVersionSelect()"><option value="0">最新 · 6/25/2026, 1:20:26 AM</option><option value="1">v2 · 6/25/2026, 1:20:26 AM</option><option value="2">v3 · 6/25/2026, 1:20:22 AM</option><option value="3">v4 · 6/25/2026, 1:17:14 AM</option><option value="4">v5 · 6/25/2026, 1:17:14 AM</option><option value="5">v6 · 6/25/2026, 1:17:12 AM</option></select>
                                 </div>
                             </div>
                             <!-- ===== 全新歷史單據列表（列表顯示模式） ===== -->
-                            <div class="history-list-view" id="historyListView">
-                                <!-- 由 JavaScript 動態生成 -->
-                            </div>
+                            <div class="history-list-view" id="historyListView"><div class="history-list-item">
+                        <span class="hli-key">M85187</span>
+                        <span class="hli-customer">-</span>
+                        <span class="hli-date">6/25/2026, 1:20:26 AM</span>
+                        <span class="hli-version">v6</span>
+                        <button class="hli-load-btn" data-key="M85187" data-action="loadQuoteByKey">載入</button>
+                    </div><div class="history-list-item">
+                        <span class="hli-key">M76196</span>
+                        <span class="hli-customer">-</span>
+                        <span class="hli-date">6/25/2026, 12:43:03 AM</span>
+                        <span class="hli-version">v4</span>
+                        <button class="hli-load-btn" data-key="M76196" data-action="loadQuoteByKey">載入</button>
+                    </div><div class="history-list-item">
+                        <span class="hli-key">M21402</span>
+                        <span class="hli-customer">-</span>
+                        <span class="hli-date">6/25/2026, 12:30:00 AM</span>
+                        <span class="hli-version">v6</span>
+                        <button class="hli-load-btn" data-key="M21402" data-action="loadQuoteByKey">載入</button>
+                    </div><div class="history-list-item">
+                        <span class="hli-key">M23349</span>
+                        <span class="hli-customer">-</span>
+                        <span class="hli-date">6/22/2026, 3:22:27 AM</span>
+                        
+                        <button class="hli-load-btn" data-key="M23349" data-action="loadQuoteByKey">載入</button>
+                    </div><div class="history-list-item">
+                        <span class="hli-key">M81231</span>
+                        <span class="hli-customer">-</span>
+                        <span class="hli-date">6/22/2026, 3:22:05 AM</span>
+                        
+                        <button class="hli-load-btn" data-key="M81231" data-action="loadQuoteByKey">載入</button>
+                    </div><div class="history-list-item">
+                        <span class="hli-key">M48883</span>
+                        <span class="hli-customer">-</span>
+                        <span class="hli-date">6/22/2026, 3:04:34 AM</span>
+                        <span class="hli-version">v6</span>
+                        <button class="hli-load-btn" data-key="M48883" data-action="loadQuoteByKey">載入</button>
+                    </div><div class="history-list-item">
+                        <span class="hli-key">M47403</span>
+                        <span class="hli-customer">-</span>
+                        <span class="hli-date">6/22/2026, 3:02:24 AM</span>
+                        <span class="hli-version">v6</span>
+                        <button class="hli-load-btn" data-key="M47403" data-action="loadQuoteByKey">載入</button>
+                    </div><div class="history-list-item">
+                        <span class="hli-key">M46446</span>
+                        <span class="hli-customer">-</span>
+                        <span class="hli-date">6/22/2026, 2:27:04 AM</span>
+                        
+                        <button class="hli-load-btn" data-key="M46446" data-action="loadQuoteByKey">載入</button>
+                    </div><div class="history-list-item">
+                        <span class="hli-key">M82627</span>
+                        <span class="hli-customer">-</span>
+                        <span class="hli-date">6/22/2026, 2:05:45 AM</span>
+                        
+                        <button class="hli-load-btn" data-key="M82627" data-action="loadQuoteByKey">載入</button>
+                    </div></div>
                             <!-- ===== 保留原有下拉選單 ===== -->
                             <div class="history-actions">
-                                <select id="quoteHistorySelect" class="history-select" onchange="renderHistoryVersionSelect()" style="min-width:180px;"><option value="M21402">#M21402 · - · 6/22/2026, 4:17:01 AM · v6</option><option value="M39270">#M39270 · - · 6/22/2026, 3:51:53 AM</option><option value="M25355">#M25355 · - · 6/22/2026, 3:42:44 AM</option><option value="M50670">#M50670 · - · 6/22/2026, 3:33:25 AM · v3</option><option value="M23349">#M23349 · - · 6/22/2026, 3:22:27 AM</option><option value="M81231">#M81231 · - · 6/22/2026, 3:22:05 AM</option><option value="M48883">#M48883 · - · 6/22/2026, 3:04:34 AM · v6</option><option value="M47403">#M47403 · - · 6/22/2026, 3:02:24 AM · v6</option><option value="M46446">#M46446 · - · 6/22/2026, 2:27:04 AM</option><option value="M13185">#M13185 · - · 6/22/2026, 2:25:51 AM · v6</option><option value="M82627">#M82627 · - · 6/22/2026, 2:05:45 AM</option><option value="M76196">#M76196 · - · 6/22/2026, 1:56:25 AM</option><option value="M20097">#M20097 · Li · 6/21/2026, 3:16:39 PM · v6</option><option value="M85187">#M85187 · - · 6/21/2026, 2:15:00 PM · v3</option><option value="M97544">#M97544 · - · 6/21/2026, 3:32:22 AM</option></select>
-                                <button class="history-btn primary" id="ui-btn-save-record" data-action="saveCurrentQuoteRecord">儲存</button>
-                                <button class="history-btn" id="ui-btn-load-record" data-action="loadSelectedQuoteRecord">載入</button>
-                                <button class="history-btn" id="ui-btn-delete-record" data-action="deleteSelectedQuoteRecord">刪除</button>
-                                <button class="history-btn" id="ui-btn-export-records" data-action="exportQuoteHistory">匯出</button>
-                                <button class="history-btn" id="ui-btn-import-records" data-action="triggerQuoteImport">匯入</button>
+                                <select id="quoteHistorySelect" class="history-select" onchange="renderHistoryVersionSelect()" style="min-width:180px;"><option value="M85187">#M85187 · - · 6/25/2026, 1:20:26 AM · v6</option><option value="M76196">#M76196 · - · 6/25/2026, 12:43:03 AM · v4</option><option value="M21402">#M21402 · - · 6/25/2026, 12:30:00 AM · v6</option><option value="M23349">#M23349 · - · 6/22/2026, 3:22:27 AM</option><option value="M81231">#M81231 · - · 6/22/2026, 3:22:05 AM</option><option value="M48883">#M48883 · - · 6/22/2026, 3:04:34 AM · v6</option><option value="M47403">#M47403 · - · 6/22/2026, 3:02:24 AM · v6</option><option value="M46446">#M46446 · - · 6/22/2026, 2:27:04 AM</option><option value="M82627">#M82627 · - · 6/22/2026, 2:05:45 AM</option></select>
+                                <button class="history-btn primary" id="ui-btn-save-record" data-action="saveCurrentQuoteRecord" type="button" style="touch-action: manipulation;">儲存</button>
+                                <button class="history-btn" id="ui-btn-load-record" data-action="loadSelectedQuoteRecord" type="button" style="touch-action: manipulation;">載入</button>
+                                <button class="history-btn" id="ui-btn-delete-record" data-action="deleteSelectedQuoteRecord" type="button" style="touch-action: manipulation;">刪除</button>
+                                <button class="history-btn" id="ui-btn-export-records" data-action="exportQuoteHistory" type="button" style="touch-action: manipulation;">匯出</button>
+                                <button class="history-btn" id="ui-btn-import-records" data-action="triggerQuoteImport" type="button" style="touch-action: manipulation;">匯入</button>
                             </div>
                             <div class="history-version-row">
-                                <button class="history-btn" id="ui-btn-load-version" data-action="loadSelectedQuoteVersion">載入版本</button>
-                                <button class="history-btn" id="ui-btn-reveal-versions" data-action="renderHistoryVersionSelect">更新版本</button>
-                                <select id="recentQuoteSelect" class="history-quick-select" onchange="loadRecentQuoteSelection()" style="min-width:160px;flex:1;"><option value="">最近單據</option><option value="M21402">#M21402 · - · 6/22/2026, 4:16:49 AM · v6</option><option value="M39270">#M39270 · - · 6/22/2026, 3:51:53 AM</option><option value="M25355">#M25355 · - · 6/22/2026, 3:42:44 AM</option><option value="M50670">#M50670 · - · 6/22/2026, 3:33:25 AM · v3</option><option value="M23349">#M23349 · - · 6/22/2026, 3:22:27 AM</option><option value="M81231">#M81231 · - · 6/22/2026, 3:22:05 AM</option><option value="M48883">#M48883 · - · 6/22/2026, 3:04:34 AM · v6</option><option value="M47403">#M47403 · - · 6/22/2026, 3:02:24 AM · v6</option></select>
-                                <button class="history-btn" id="ui-btn-refresh-recent" data-action="renderRecentQuoteSelect">最近</button>
+                                <button class="history-btn" id="ui-btn-load-version" data-action="loadSelectedQuoteVersion" type="button" style="touch-action: manipulation;">載入版本</button>
+                                <button class="history-btn" id="ui-btn-reveal-versions" data-action="renderHistoryVersionSelect" type="button" style="touch-action: manipulation;">更新版本</button>
+                                <select id="recentQuoteSelect" class="history-quick-select" onchange="loadRecentQuoteSelection()" style="min-width:160px;flex:1;"><option value="">最近單據</option><option value="M85187">#M85187 · - · 6/25/2026, 1:20:26 AM · v6</option><option value="M76196">#M76196 · - · 6/25/2026, 12:43:03 AM · v4</option><option value="M21402">#M21402 · - · 6/25/2026, 12:30:00 AM · v6</option><option value="M23349">#M23349 · - · 6/22/2026, 3:22:27 AM</option><option value="M81231">#M81231 · - · 6/22/2026, 3:22:05 AM</option><option value="M48883">#M48883 · - · 6/22/2026, 3:04:34 AM · v6</option><option value="M47403">#M47403 · - · 6/22/2026, 3:02:24 AM · v6</option><option value="M46446">#M46446 · - · 6/22/2026, 2:27:04 AM</option></select>
+                                <button class="history-btn" id="ui-btn-refresh-recent" data-action="renderRecentQuoteSelect" type="button" style="touch-action: manipulation;">最近</button>
                             </div>
                         </div>
                     </div>
@@ -2324,8 +2374,8 @@
                                 <label class="sync-toggle"><input type="checkbox" id="syncAuto" onchange="saveSyncConfig()"> <span id="ui-sync-auto">自動</span></label>
                             </div>
                             <div class="sync-actions">
-                                <button class="sync-btn primary" id="ui-btn-sync-now" data-action="syncQuoteBackupNow">立即同步</button>
-                                <button class="sync-btn" id="ui-btn-sync-pull" data-action="pullQuoteBackupNow">拉取最新</button>
+                                <button class="sync-btn primary" id="ui-btn-sync-now" data-action="syncQuoteBackupNow" type="button" style="touch-action: manipulation;">立即同步</button>
+                                <button class="sync-btn" id="ui-btn-sync-pull" data-action="pullQuoteBackupNow" type="button" style="touch-action: manipulation;">拉取最新</button>
                             </div>
                         </div>
                     </div>
@@ -2348,15 +2398,15 @@
                 <div class="col">
                     <label id="ui-lbl-qnum">單號 (5位):</label>
                     <div style="display:flex;align-items:center;"><span style="font-weight:700;margin-right:5px;font-size:15px;color:#513c2f;">#M</span>
-                        <input type="number" id="quoteNo" placeholder="00001" oninput="if(this.value.length>5)this.value=this.value.slice(0,5);updateDocumentTitle();autoSaveDraft()">
+                        <input type="number" id="quoteNo" placeholder="00001" oninput="if(this.value.length&gt;5)this.value=this.value.slice(0,5);updateDocumentTitle();autoSaveDraft()">
                     </div>
                 </div>
                 <div class="col" style="min-width:120px;">
                     <label>客戶歷史訂單</label>
-                    <button class="btn-action btn-soft-lite" style="min-width:100%;padding:8px;" data-action="showCustomerHistory">📂 查看</button>
+                    <button class="btn-action btn-soft-lite" style="min-width: 100%; padding: 8px; touch-action: manipulation;" data-action="showCustomerHistory" type="button">📂 查看</button>
                 </div>
             </div>
-            <div id="customerAutoHint" class="customer-auto-hint" style="display: none;">單據已儲存: M21402</div>
+            <div id="customerAutoHint" class="customer-auto-hint" style="display: none;">草稿已恢復</div>
             <div class="row simple-hide">
                 <div class="col" style="flex:2;min-width:100%;"><label id="ui-lbl-caddr">屋苑/大廈:</label><input type="text" id="addrEstate" placeholder="例: 沙田第一城" oninput="autoSaveDraft()"></div>
                 <div class="col"><label id="ui-lbl-addr-b">座數:</label><input type="text" id="addrBlock" placeholder="例: 3" oninput="autoSaveDraft()"></div>
@@ -2382,7 +2432,7 @@
                                 <input type="time" id="measureEndTime" style="flex:1;width:100%;" onchange="autoSaveDraft()">
                             </div>
                         </div>
-                        <button data-action="generateICS" style="background:#b5651d;color:#fff;border:none;padding:8px 14px;border-radius:var(--radius-sm);cursor:pointer;font-weight:700;flex:1;min-width:120px;box-shadow:0 2px 5px rgba(0,0,0,0.1);display:flex;justify-content:center;align-items:center;gap:4px;height:36px;font-size:13px;touch-action:manipulation;">📅 行事曆</button>
+                        <button data-action="generateICS" style="background:#b5651d;color:#fff;border:none;padding:8px 14px;border-radius:var(--radius-sm);cursor:pointer;font-weight:700;flex:1;min-width:120px;box-shadow:0 2px 5px rgba(0,0,0,0.1);display:flex;justify-content:center;align-items:center;gap:4px;height:36px;font-size:13px;touch-action:manipulation;" type="button">📅 行事曆</button>
                     </div>
                 </div>
                 <div class="col" style="margin-top:8px;min-width:100%;">
@@ -2393,40 +2443,40 @@
         </div>
 
         <!-- ===== 窗位列表 ===== -->
-        <div id="windowList"><div data-window-id="w_1782068547230_38680" class="window-item">
-            <div class="drag-handle" draggable="true" title="拖曳排序">☰</div>
-            <div class="win-flex-row">
-              <div style="flex:1.5;min-width:90px;"><label class="lbl-win-pos">位置</label><select class="room-type"><option value="living">客廳</option><option value="dining">飯廳</option><option value="master">主人房</option><option value="bed">睡房</option><option value="study">書房</option><option value="maid">工人房</option><option value="toilet">廁所</option><option value="kitchen">廚房</option><option value="other">其他</option></select></div>
-              <div style="flex:0.8;min-width:60px;"><label class="lbl-win-num">編號</label><select class="room-num"><option value="">無</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
-              <div style="flex:1.2;min-width:100px;"><label class="lbl-win-unit">單位</label><select class="item-unit" onchange="updateWindowLiveBox(this.closest('.window-item'));if($('resultBox').style.display==='block')calculateAll();"><option value="mm">毫米 (mm)</option><option value="cm">厘米 (cm)</option><option value="m">米 (m)</option><option value="inch">英吋 (in)</option><option value="ft">英呎 (ft)</option><option value="yd">碼 (yd)</option></select></div>
-              <div style="flex:1;min-width:80px;"><label class="lbl-win-w">闊度</label><input type="number" class="window-width" value="1500" oninput="updateWindowLiveBox(this.closest('.window-item'));if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"></div>
-              <div style="flex:1;min-width:80px;"><label class="lbl-win-h">高度</label><input type="number" class="window-height" value="2000" oninput="updateWindowLiveBox(this.closest('.window-item'));if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"></div>
-              <div style="flex:1;min-width:90px;" class="simple-hide"><label class="lbl-reserve-lr">左右預留(mm)</label><input type="number" class="reserve-lr" value="0" oninput="updateWindowLiveBox(this.closest('.window-item'));autoSaveDraft()"></div>
-              <div style="flex:1;min-width:90px;" class="simple-hide"><label class="lbl-reserve-tb">上下預留(mm)</label><input type="number" class="reserve-tb" value="0" oninput="updateWindowLiveBox(this.closest('.window-item'));autoSaveDraft()"></div>
-              <div class="simple-hide open-type-wrapper" style="flex: 1 1 0%; min-width: 90px; display: block;"><label class="lbl-win-open">開關方式</label><select class="open-type"><option value="double">雙開</option><option value="single">單開</option></select></div>
-            </div>
-            <div class="win-flex-row">
-              <div style="flex:2;min-width:160px;"><label class="lbl-win-layer">款式物料</label><select class="layer-type" onchange="handleLayerChange(this);if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"><option value="both">布+紗</option><option value="double_blackout">雙層遮光布</option><option value="triple">布+紗+遮光</option><option value="curtain">淨布簾</option><option value="sheer">淨窗紗</option><option value="track_only">淨路軌</option><option value="rateS">S級</option><option value="rateA">A級</option><option value="rateB">B級</option><option value="rateC">C級</option><option value="rateD">D級</option><option value="sq_blinds">百葉簾</option><option value="sq_honey">風琴簾</option><option value="sq_zebra">斑馬簾</option><option value="sq_roman">羅馬簾</option><option value="sq_roller">捲簾</option><option value="sq_mosquito">防蚊網</option><option value="sq_other">其他平方呎</option></select></div>
-              <div class="custom-price-field" style="display:none;flex:1.3;min-width:110px;"><label class="lbl-sq-price">單價 (sq/ft)</label><input type="number" class="custom-rate" placeholder="自訂" oninput="updateWindowLiveBox(this.closest('.window-item'));if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"><div class="mosq-mesh-wrap" style="display:none;margin-top:6px;"><label class="lbl-mesh-type">蚊網目數</label><select class="mosq-mesh" onchange="updateWindowLiveBox(this.closest('.window-item'));autoSaveDraft()"><option value="18">18目</option><option value="20">20目</option><option value="24">24目</option><option value="30">30目</option><option value="40">40目</option><option value="diamond">金剛網</option></select></div></div>
-              <div style="flex:3;min-width:160px;" class="simple-hide"><label class="lbl-win-rem">備註</label><input type="text" class="window-rem" placeholder="例如: #2103 或 半腰窗" oninput="autoSaveDraft()"></div>
-            </div>
-            <div class="win-sub-box simple-hide">
-              <div class="track-item" style="flex: 1 1 0%; min-width: 90px; display: block;"><label class="lbl-win-m-qty">手動路軌</label><select class="manual-qty" onchange="handleTrackQtyChange(this);if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"><option value="0">0</option><option value="1" selected>1 支</option><option value="2">2 支</option><option value="3">3 支</option><option value="4">4 支</option><option value="5">5 支</option></select></div>
-              <div class="track-item" style="flex: 1 1 0%; min-width: 90px; display: block;"><label class="lbl-win-e-qty">電動路軌</label><select class="motor-qty" onchange="handleTrackQtyChange(this);if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"><option value="0">0</option><option value="1">1 支</option><option value="2">2 支</option><option value="3">3 支</option><option value="4">4 支</option><option value="5">5 支</option></select></div>
-              <div class="track-item" style="flex: 1.3 1 0%; min-width: 100px; display: block;"><label class="lbl-win-m-price">手動軌單價($)</label><input type="number" class="manual-price" value="180" oninput="if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"></div>
-              <div class="track-item" style="flex: 1.3 1 0%; min-width: 100px; display: block;"><label class="lbl-win-e-price">電動軌單價($)</label><input type="number" class="motor-price" value="2500" oninput="if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"></div>
-              <div class="track-item motor-power-wrapper" style="display: none; flex: 1 1 0%; min-width: 90px;"><label class="lbl-motor-power">電動供電</label><select class="motor-power" onchange="autoSaveDraft()"><option value="wired">濕電</option><option value="battery">乾電</option></select></div>
-              <div style="flex:1.2;min-width:130px;">
-                <label class="check-container" style="padding-top:0;color:#4a3326;font-size:12px;">
-                  <input type="checkbox" class="window-double-toggle" onchange="calculateAll();autoSaveDraft()">
-                  <span class="lbl-win-double-toggle">此窗雙倍計價</span>
-                </label>
-              </div>
-              <div style="flex:1;min-width:90px;display:flex;align-items:flex-end;"><button class="remove-btn" onclick="removeWindow(this)">❌ 刪除</button></div>
-            </div><div class="window-photo-box simple-hide"><div class="row" style="margin-bottom:0;"><div class="col" style="min-width:180px;"><label class="lbl-photo-site">現場照片</label><input type="file" accept="image/*" onchange="handleWindowPhotoUpload(this,'site')"></div><div class="col" style="min-width:180px;"><label class="lbl-photo-install">安裝位置照片</label><input type="file" accept="image/*" onchange="handleWindowPhotoUpload(this,'install')"></div></div><div class="window-photo-grid"></div></div><div class="window-live-box"><div><strong class="lbl-live-ft">換算尺寸</strong>: <span class="live-dim-ft">4.92 ft × 6.56 ft</span></div><div><strong class="lbl-live-area">面積</strong>: <span class="live-area">32.30 sq.ft</span></div><div><strong class="lbl-live-make">製作尺寸</strong>: <span class="live-make-size">1500 × 2000 mm</span></div><div class="window-live-pricing" style="display: none;"><strong class="lbl-live-unit">單價</strong>: <span class="live-unit-price">-</span> ｜ <strong class="lbl-live-sub">小計</strong>: <span class="live-sq-subtotal">-</span></div></div></div></div>
+        <div id="windowList"><div data-window-id="w_1782022188680_38074" class="window-item">
+                <div class="drag-handle" draggable="true" title="拖曳排序">☰</div>
+                <div class="win-flex-row">
+                  <div style="flex:1.5;min-width:90px;"><label class="lbl-win-pos">位置</label><select class="room-type"><option value="living">客廳</option><option value="dining">飯廳</option><option value="master">主人房</option><option value="bed">睡房</option><option value="study">書房</option><option value="maid">工人房</option><option value="toilet">廁所</option><option value="kitchen">廚房</option><option value="other">其他</option></select></div>
+                  <div style="flex:0.8;min-width:60px;"><label class="lbl-win-num">編號</label><select class="room-num"><option value="">無</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option></select></div>
+                  <div style="flex:1.2;min-width:100px;"><label class="lbl-win-unit">單位</label><select class="item-unit" onchange="updateWindowLiveBox(this.closest('.window-item'));if($('resultBox').style.display==='block')calculateAll();"><option value="mm">毫米 (mm)</option><option value="cm">厘米 (cm)</option><option value="m">米 (m)</option><option value="inch">英吋 (in)</option><option value="ft">英呎 (ft)</option><option value="yd">碼 (yd)</option></select></div>
+                  <div style="flex:1;min-width:80px;"><label class="lbl-win-w">闊度</label><input type="number" class="window-width" value="1500" oninput="updateWindowLiveBox(this.closest('.window-item'));if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"></div>
+                  <div style="flex:1;min-width:80px;"><label class="lbl-win-h">高度</label><input type="number" class="window-height" value="2000" oninput="updateWindowLiveBox(this.closest('.window-item'));if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"></div>
+                  <div style="flex:1;min-width:90px;" class="simple-hide"><label class="lbl-reserve-lr">左右預留(mm)</label><input type="number" class="reserve-lr" value="0" oninput="updateWindowLiveBox(this.closest('.window-item'));autoSaveDraft()"></div>
+                  <div style="flex:1;min-width:90px;" class="simple-hide"><label class="lbl-reserve-tb">上下預留(mm)</label><input type="number" class="reserve-tb" value="0" oninput="updateWindowLiveBox(this.closest('.window-item'));autoSaveDraft()"></div>
+                  <div class="simple-hide open-type-wrapper" style="flex: 1 1 0%; min-width: 90px; display: block;"><label class="lbl-win-open">開關方式</label><select class="open-type"><option value="double">雙開</option><option value="single">單開</option></select></div>
+                </div>
+                <div class="win-flex-row">
+                  <div style="flex:2;min-width:160px;"><label class="lbl-win-layer">款式物料</label><select class="layer-type" onchange="handleLayerChange(this);if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"><option value="both">布+紗</option><option value="double_blackout">雙層遮光布</option><option value="triple">布+紗+遮光</option><option value="curtain">淨布簾</option><option value="sheer">淨窗紗</option><option value="track_only">淨路軌</option><option value="rateS">S級</option><option value="rateA">A級</option><option value="rateB">B級</option><option value="rateC">C級</option><option value="rateD">D級</option><option value="sq_blinds">百葉簾</option><option value="sq_honey">風琴簾</option><option value="sq_zebra">斑馬簾</option><option value="sq_roman">羅馬簾</option><option value="sq_roller">捲簾</option><option value="sq_mosquito">防蚊網</option><option value="sq_other">其他平方呎</option></select></div>
+                  <div class="custom-price-field" style="display:none;flex:1.3;min-width:110px;"><label class="lbl-sq-price">單價 (sq/ft)</label><input type="number" class="custom-rate" placeholder="自訂" oninput="updateWindowLiveBox(this.closest('.window-item'));if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"><div class="mosq-mesh-wrap" style="display:none;margin-top:6px;"><label class="lbl-mesh-type">蚊網目數</label><select class="mosq-mesh" onchange="updateWindowLiveBox(this.closest('.window-item'));autoSaveDraft()"><option value="18">18目</option><option value="20">20目</option><option value="24">24目</option><option value="30">30目</option><option value="40">40目</option><option value="diamond">金剛網</option></select></div></div>
+                  <div style="flex:3;min-width:160px;" class="simple-hide"><label class="lbl-win-rem">備註</label><input type="text" class="window-rem" placeholder="例如: #2103 或 半腰窗" oninput="autoSaveDraft()"></div>
+                </div>
+                <div class="win-sub-box simple-hide">
+                  <div class="track-item" style="flex: 1 1 0%; min-width: 90px; display: block;"><label class="lbl-win-m-qty">手動路軌</label><select class="manual-qty" onchange="handleTrackQtyChange(this);if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"><option value="0">0</option><option value="1" selected="">1 支</option><option value="2">2 支</option><option value="3">3 支</option><option value="4">4 支</option><option value="5">5 支</option></select></div>
+                  <div class="track-item" style="flex: 1 1 0%; min-width: 90px; display: block;"><label class="lbl-win-e-qty">電動路軌</label><select class="motor-qty" onchange="handleTrackQtyChange(this);if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"><option value="0">0</option><option value="1">1 支</option><option value="2">2 支</option><option value="3">3 支</option><option value="4">4 支</option><option value="5">5 支</option></select></div>
+                  <div class="track-item" style="flex: 1.3 1 0%; min-width: 100px; display: block;"><label class="lbl-win-m-price">手動軌單價($)</label><input type="number" class="manual-price" value="180" oninput="if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"></div>
+                  <div class="track-item" style="flex: 1.3 1 0%; min-width: 100px; display: block;"><label class="lbl-win-e-price">電動軌單價($)</label><input type="number" class="motor-price" value="2500" oninput="if($('resultBox').style.display==='block')calculateAll();autoSaveDraft()"></div>
+                  <div class="track-item motor-power-wrapper" style="display: none; flex: 1 1 0%; min-width: 90px;"><label class="lbl-motor-power">電動供電</label><select class="motor-power" onchange="autoSaveDraft()"><option value="wired">濕電</option><option value="battery">乾電</option></select></div>
+                  <div style="flex:1.2;min-width:130px;">
+                    <label class="check-container" style="padding-top:0;color:#4a3326;font-size:12px;">
+                      <input type="checkbox" class="window-double-toggle" onchange="calculateAll();autoSaveDraft()">
+                      <span class="lbl-win-double-toggle">此窗雙倍計價</span>
+                    </label>
+                  </div>
+                  <div style="flex:1;min-width:90px;display:flex;align-items:flex-end;"><button class="remove-btn" onclick="removeWindow(this)" type="button" style="touch-action: manipulation;">❌ 刪除</button></div>
+                </div><div class="window-photo-box simple-hide"><div class="row" style="margin-bottom:0;"><div class="col" style="min-width:180px;"><label class="lbl-photo-site">現場照片</label><input type="file" accept="image/*" onchange="handleWindowPhotoUpload(this,'site')"></div><div class="col" style="min-width:180px;"><label class="lbl-photo-install">安裝位置照片</label><input type="file" accept="image/*" onchange="handleWindowPhotoUpload(this,'install')"></div></div><div class="window-photo-grid"></div></div><div class="window-live-box"><div><strong class="lbl-live-ft">換算尺寸</strong>: <span class="live-dim-ft">0.00 ft × 0.00 ft</span></div><div><strong class="lbl-live-area">面積</strong>: <span class="live-area">0.00 sq.ft</span></div><div><strong class="lbl-live-make">製作尺寸</strong>: <span class="live-make-size">0 × 0 mm</span></div><div class="window-live-pricing" style="display: none;"><strong class="lbl-live-unit">單價</strong>: <span class="live-unit-price">-</span> ｜ <strong class="lbl-live-sub">小計</strong>: <span class="live-sq-subtotal">-</span></div></div></div></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
-            <button class="add-btn" id="ui-btn-addwin" data-action="addWindow" style="flex:2;min-width:120px;">+ 新增窗戶位置</button>
-            <button class="add-btn dark" id="ui-btn-clone-window" data-action="duplicateLastWindow" style="flex:1;min-width:100px;background:#6f5b4c;color:#fff;border-color:#6f5b4c;">📋 複製窗位</button>
+            <button class="add-btn" id="ui-btn-addwin" data-action="addWindow" style="flex: 2 1 0%; min-width: 120px; touch-action: manipulation;" type="button">+ 新增窗戶位置</button>
+            <button class="add-btn dark" id="ui-btn-clone-window" data-action="duplicateLastWindow" style="flex: 1 1 0%; min-width: 100px; background: rgb(111, 91, 76); color: rgb(255, 255, 255); border-color: rgb(111, 91, 76); touch-action: manipulation;" type="button">📋 複製窗位</button>
         </div>
 
         <!-- ===== 付款管理 ===== -->
@@ -2473,7 +2523,7 @@
         </div>
 
         <!-- ===== 特別備註 ===== -->
-        <button class="toggle-section-btn simple-hide" style="background:#a89485;" onclick="toggleSection('panelRemarks','btnToggleRem')">
+        <button class="toggle-section-btn simple-hide" style="background: rgb(168, 148, 133); touch-action: manipulation;" onclick="toggleSection('panelRemarks','btnToggleRem')" type="button">
             <span id="btnToggleRem">➕ 特別備註 / 異常紀錄</span><span>▼</span>
         </button>
         <div class="panel-skeleton" id="panelRemarksSkeleton"></div>
@@ -2496,12 +2546,12 @@
 
         <!-- ===== 操作按鈕 ===== -->
         <div class="action-btns">
-            <button class="btn-action" id="ui-btn-reset" style="background:#d9827c;" data-action="resetForm">🔄 一鍵清零</button>
-            <button class="btn-action" id="ui-btn-quote" style="background:#8e7f75;" data-action="generateDoc" data-doc="quote">📝 報價單</button>
-            <button class="btn-action" id="ui-btn-measure-receipt" style="background:#b5651d;" data-action="generateDoc" data-doc="measure_receipt">📏 度尺訂金單</button>
-            <button class="btn-action" id="ui-btn-invoice" style="background:#664e3f;" data-action="generateDoc" data-doc="invoice">🧾 正式單據</button>
-            <button class="btn-action btn-soft-lite" id="btnToggleTools" data-action="toggleTools">➕ 進階工具</button>
-            <button class="btn-action" id="ui-btn-print" style="background: rgb(74, 63, 53); display: inline-block;" data-action="runQuickPrint">🖨️ 列印/PDF</button>
+            <button class="btn-action" id="ui-btn-reset" style="background: rgb(217, 130, 124); touch-action: manipulation;" data-action="resetForm" type="button">🔄 一鍵清零</button>
+            <button class="btn-action" id="ui-btn-quote" style="background: rgb(142, 127, 117); touch-action: manipulation;" data-action="generateDoc" data-doc="quote" type="button">📝 報價單</button>
+            <button class="btn-action" id="ui-btn-measure-receipt" style="background: rgb(181, 101, 29); touch-action: manipulation;" data-action="generateDoc" data-doc="measure_receipt" type="button">📏 度尺訂金單</button>
+            <button class="btn-action" id="ui-btn-invoice" style="background: rgb(102, 78, 63); touch-action: manipulation;" data-action="generateDoc" data-doc="invoice" type="button">🧾 正式單據</button>
+            <button class="btn-action btn-soft-lite" id="btnToggleTools" data-action="toggleTools" type="button" style="touch-action: manipulation;">➕ 進階工具</button>
+            <button class="btn-action" id="ui-btn-print" style="background: rgb(74, 63, 53); display: inline-block; touch-action: manipulation;" data-action="runQuickPrint" type="button">🖨️ 列印/PDF</button>
         </div>
 
         <!-- ===== 進階工具 ===== -->
@@ -2517,19 +2567,19 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col"><button class="btn-action btn-soft-lite" id="ui-btn-wa-copy" data-action="copyWhatsAppQuote">📲 複製 WhatsApp 報價</button></div>
-                <div class="col"><button class="btn-action btn-soft-lite" id="ui-btn-install-copy" data-action="copyInstallSheet">📋 複製安裝紙</button></div>
-                <div class="col"><button class="btn-action btn-soft-lite" id="ui-btn-export-csv" data-action="exportCalcCsv">📥 匯出 CSV</button></div>
-                <div class="col"><button class="btn-action btn-soft-lite" data-action="restoreDraft">💾 恢復草稿</button></div>
+                <div class="col"><button class="btn-action btn-soft-lite" id="ui-btn-wa-copy" data-action="copyWhatsAppQuote" type="button" style="touch-action: manipulation;">📲 複製 WhatsApp 報價</button></div>
+                <div class="col"><button class="btn-action btn-soft-lite" id="ui-btn-install-copy" data-action="copyInstallSheet" type="button" style="touch-action: manipulation;">📋 複製安裝紙</button></div>
+                <div class="col"><button class="btn-action btn-soft-lite" id="ui-btn-export-csv" data-action="exportCalcCsv" type="button" style="touch-action: manipulation;">📥 匯出 CSV</button></div>
+                <div class="col"><button class="btn-action btn-soft-lite" data-action="restoreDraft" type="button" style="touch-action: manipulation;">💾 恢復草稿</button></div>
             </div>
         </div>
 
         <!-- ===== 結果區 ===== -->
-        <div class="result-box" id="resultBox">
+        <div class="result-box open" id="resultBox" style="display: block;">
             <div class="pdf-type-selector" style="display: none;">
                 <span style="font-size:13px;color:#513c2f;font-weight:700;width:100%;" id="ui-pdf-sel-lbl">顯示模式：</span>
-                <button class="pdf-type-btn active" id="btn-pdf-cust" data-action="setPdfMode" data-mode="customer">客戶版 (隱藏地址)</button>
-                <button class="pdf-type-btn" id="btn-pdf-comp" data-action="setPdfMode" data-mode="company">公司版 (顯示地址)</button>
+                <button class="pdf-type-btn active" id="btn-pdf-cust" data-action="setPdfMode" data-mode="customer" type="button" style="touch-action: manipulation;">客戶版 (隱藏地址)</button>
+                <button class="pdf-type-btn" id="btn-pdf-comp" data-action="setPdfMode" data-mode="company" type="button" style="touch-action: manipulation;">公司版 (顯示地址)</button>
             </div>
             <div class="invoice-header">
                 <div>
@@ -2538,7 +2588,7 @@
                     <div id="invoiceNoWrapper" class="inv-number-badge">No: ---</div>
                 </div>
                 <div class="invoice-company-info">
-                    <strong>MCurtain Ltd.</strong><br>新城市中央廣場 Home Circle 811<br>Tel: (852) 2634 0689<br><span id="ui-inv-date">印單日期:</span> <span id="invDate">2026-06-22</span>
+                    <strong>MCurtain Ltd.</strong><br>新城市中央廣場 Home Circle 811<br>Tel: (852) 2634 0689<br><span id="ui-inv-date">印單日期:</span> <span id="invDate">2026-06-25</span>
                 </div>
             </div>
 
@@ -2557,15 +2607,15 @@
                 </div>
                 <div class="info-line">
                     <strong>Sales:</strong>
-                    <span class="info-value" id="lblStaffName">Emily</span>
+                    <span class="info-value" id="lblStaffName">Henry</span>
                 </div>
                 <div id="printDateBox" style="margin-top:8px;font-size:12px;color:#6e5d53;display:none;padding-left:72px;">
                     <div id="printMeasureDateRow"><span id="lbl_print_mdate">度尺日期:</span> <span id="printMeasureDate"></span></div>
                     <div id="printInstallDateRow"><span id="lbl_print_idate">預計安裝:</span> <span id="printInstallDate"></span></div>
                 </div>
                 <!-- ===== 顯示付款方式 & 交易編號（單據內） ===== -->
-                <div id="paymentInfoBox" style="margin-top:8px;font-size:12px;color:#6e5d53;display:none;padding-left:72px;">
-                    <div id="paymentMethodDisplayRow"><span id="lbl_payment_method_display">付款方式:</span> <span id="printPaymentMethod">-</span></div>
+                <div id="paymentInfoBox" style="margin-top: 8px; font-size: 12px; color: rgb(110, 93, 83); display: none; padding-left: 72px;">
+                    <div id="paymentMethodDisplayRow"><span id="lbl_payment_method_display">付款方式:</span> <span id="printPaymentMethod">信用卡</span></div>
                     <div id="transactionIdDisplayRow"><span id="lbl_transaction_id_display">交易編號:</span> <span id="printTransactionId">-</span></div>
                 </div>
             </div>
@@ -2574,31 +2624,31 @@
             <div class="table-responsive" style="display: block;">
                 <table>
                     <thead><tr><th id="th-item">位置</th><th id="th-size">尺寸</th><th id="th-ft">呎數</th><th id="th-type">款式</th><th id="th-open" class="simple-hide">開關</th><th id="th-motor" class="simple-hide">路軌</th><th id="th-rem" class="simple-hide">備註</th><th id="th-sub">小計</th></tr></thead>
-                    <tbody id="reportTableBody"><tr><td><strong>客廳</strong></td><td>1500mm (闊)</td><td>5 呎</td><td>布+紗</td><td class="simple-hide">雙開</td><td class="simple-hide">手動x2</td><td class="simple-hide">-</td><td>HK$4110</td></tr></tbody>
+                    <tbody id="reportTableBody"><tr><td><strong>客廳</strong></td><td>0mm (闊)</td><td>0 呎</td><td>布+紗</td><td class="simple-hide">雙開</td><td class="simple-hide">手動x2</td><td class="simple-hide">-</td><td>HK$0</td></tr></tbody>
                 </table>
             </div>
             <div class="summary-wrapper" id="mainSummaryWrapper">
-                <div class="summary-item"><span id="ui-sum-sub">小計:</span><span id="subTotalText">HK$4110</span></div>
-                <div class="summary-item simple-hide" id="summaryInstRow" style="display: flex;"><span id="ui-sum-inst">安裝費:</span><span id="installTotalText">HK$500</span></div>
+                <div class="summary-item"><span id="ui-sum-sub">小計:</span><span id="subTotalText">HK$0</span></div>
+                <div class="summary-item simple-hide" id="summaryInstRow" style="display: flex;"><span id="ui-sum-inst">安裝費:</span><span id="installTotalText">HK$0</span></div>
                 <div class="summary-item simple-hide" id="summaryUrgentRow" style="display:none;color:#d45d43;"><span id="ui-sum-urgent">附加費:</span><span id="urgentTotalText">HK$0</span></div>
                 <div class="summary-item" id="summaryDiscRow" style="display: flex;">
                     <span id="ui-sum-disc">折扣:</span>
                     <select id="discountSelect" onchange="applyDiscount();autoSaveDraft()" style="width:auto;padding:4px 28px 4px 8px;">
                         <option value="1.0">原價</option>
-                        <script>for(let i=95;i>=50;i-=5)document.write(`<option value="${i/100}">${i}% (${i/10}折)</option>`);</script>
+                        <script>for(let i=95;i>=50;i-=5)document.write(`<option value="${i/100}">${i}% (${i/10}折)</option>`);</script><option value="0.95">95% (9.5折)</option><option value="0.9">90% (9折)</option><option value="0.85">85% (8.5折)</option><option value="0.8">80% (8折)</option><option value="0.75">75% (7.5折)</option><option value="0.7">70% (7折)</option><option value="0.65">65% (6.5折)</option><option value="0.6">60% (6折)</option><option value="0.55">55% (5.5折)</option><option value="0.5">50% (5折)</option><option value="0.95">95% (9.5折)</option><option value="0.9">90% (9折)</option><option value="0.85">85% (8.5折)</option><option value="0.8">80% (8折)</option><option value="0.75">75% (7.5折)</option><option value="0.7">70% (7折)</option><option value="0.65">65% (6.5折)</option><option value="0.6">60% (6折)</option><option value="0.55">55% (5.5折)</option><option value="0.5">50% (5折)</option><option value="0.95">95% (9.5折)</option><option value="0.9">90% (9折)</option><option value="0.85">85% (8.5折)</option><option value="0.8">80% (8折)</option><option value="0.75">75% (7.5折)</option><option value="0.7">70% (7折)</option><option value="0.65">65% (6.5折)</option><option value="0.6">60% (6折)</option><option value="0.55">55% (5.5折)</option><option value="0.5">50% (5折)</option>
                     </select>
-                    <span id="lblDiscountText" style="display: inline;">-HK$206</span>
+                    <span id="lblDiscountText" style="display: inline;">-</span>
                 </div>
-                <div class="summary-item" id="summaryMeasureDeductRow" style="display: flex; color: rgb(181, 101, 29); font-weight: 700;"><span id="ui-sum-measure-deduct">扣除預收度尺費:</span><span>-HK$500</span></div>
-                <div class="summary-item grand-total"><span id="ui-sum-grand">最終總價:</span><span id="grandTotalText">HK$3905</span></div>
+                <div class="summary-item" id="summaryMeasureDeductRow" style="display: none; color: rgb(181, 101, 29); font-weight: 700;"><span id="ui-sum-measure-deduct">扣除預收度尺費:</span><span>-HK$500</span></div>
+                <div class="summary-item grand-total"><span id="ui-sum-grand">最終總價:</span><span id="grandTotalText">HK$0</span></div>
                 <div class="summary-item receipt-highlight" id="summaryDepRow" style="display: none;">
                     <span id="ui-sum-dep-paid">已付訂金 (首期):</span>
-                    <span id="depositPaidText">HK$1172</span>
-                    <span id="lblDepositPrintText" style="display:none;font-weight:700;">HK$1172</span>
+                    <span id="depositPaidText">HK$0</span>
+                    <span id="lblDepositPrintText" style="display:none;font-weight:700;">HK$0</span>
                 </div>
                 <div class="summary-item balance-highlight" id="summaryBalRow" style="display: none;">
-                    <span id="ui-sum-balance">尚欠尾款:</span>
-                    <span id="balanceDueText">HK$2733</span>
+                    <span id="ui-sum-balance">尚餘尾款</span>
+                    <span id="balanceDueText">HK$0</span>
                 </div>
             </div>
             <div id="quoteDisclaimer" style="margin-top: 20px; padding: 12px; background: rgb(255, 243, 205); color: rgb(133, 100, 4); border: 1px solid rgb(255, 238, 186); border-radius: var(--radius-sm); font-weight: 700; text-align: center; font-size: 13px; display: block;">⚠️ 此為初步問價參考，最終以實際度尺為準。</div>
@@ -2621,7 +2671,7 @@
     <!-- ===== 客戶歷史訂單彈窗 ===== -->
     <div class="modal-overlay" id="historyModal">
         <div class="modal-box">
-            <button class="close-btn" onclick="closeHistoryModal()">✕</button>
+            <button class="close-btn" onclick="closeHistoryModal()" type="button" style="touch-action: manipulation;">✕</button>
             <h3 id="historyModalTitle">客戶歷史訂單</h3>
             <ul class="history-list" id="historyList"></ul>
         </div>
@@ -5759,5 +5809,5 @@
             console.warn('Runtime error:', e.message);
         });
     </script>
-</body>
-</html>
+
+</body></html>
